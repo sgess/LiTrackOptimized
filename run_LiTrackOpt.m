@@ -15,14 +15,20 @@ par_limits;
 % Set Parameter guess values
 sim_params;
 
-% Run LiTrack
-OUT = LiTrackOpt('FACETpar');
+for i=1:100
+    
+    PARAM.NRTL.AMPL = params(i);
+    
+    % Run LiTrack
+    OUT = LiTrackOpt('FACETpar');
+    
+    % Interpolate simulated spectrum
+    sim_spectrum = interpSim(OUT,spectrum_axis);
+    
+    % Calculate residual
+    residual = sum((sim_spectrum - data_spectrum).^2);
 
-% Interpolate simulated spectrum 
-sim_spectrum = interpSim(OUT,spectrum_axis);
-
-% Calculate residual
-residual = sum((sim_spectrum - data_spectrum).^2);
+end
 
 % Plot Output
 plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
