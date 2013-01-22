@@ -53,3 +53,6 @@ High_limit= [10e-3;
              6;
              130;
              2000;];
+         
+Cent=(High_limit+Low_limit)/2;
+Diff=High_limit-Low_limit;

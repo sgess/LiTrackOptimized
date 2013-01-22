@@ -48,19 +48,18 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-scale = (High_limit-Low_limit);
-
-alpha = 0.01+zeros(1,17);
+alpha = ones(1,17);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 0.01+zeros(1,17);
+gain = ones(1,17);
 
 
 
 % Vector of 17 parameters that we will optimize
 
 params=zeros(17,ESsteps);
+pscaled=zeros(17,ESsteps);
 cost=zeros(1,ESsteps);
 
     params(1,1) = PARAM.INIT.SIGZ0; % Bunch Length
@@ -104,19 +103,19 @@ for j=1:ESsteps-1;
     % Set Cost as the value of the residual
     cost(j) = residual;
     
-    params(:,j)=params(:,j)./max(abs(High_limit),abs(Low_limit));
+    pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
     for k = 1:17;
-        params(k,j+1)=params(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
-        if params(k,j+1) < Low_limit(k);
-            params(k,j+1) = Low_limit(k);
-        else if params(k,j+1) > High_limit(k);
-                params(k,j+1) = High_limit(k);
+        pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
+        if pscaled(k,j+1) < -1;
+            pscaled(k,j+1) = -1;
+        else if pscaled(k,j+1) > 1;
+                pscaled(k,j+1) = 1;
             end
         end
     end
     
-    params(:,j)=params(:,j).*max(abs(High_limit),abs(Low_limit));
+    params(:,j+1)=Diff.*pscaled(:,j+1)+Cent;
     
     PARAM.INIT.SIGZ0 = params(1,j+1);           % Bunch Length
     PARAM.INIT.SIGD0 = params(2,j+1);           % Initial Energy Spread
