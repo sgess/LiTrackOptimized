@@ -20,7 +20,8 @@ sim_params;
 %
 
 % Create the w values, w0 scales all of them
-w0=4000;
+w0=10000;
+w00=500;
 
 w=zeros(1,17);
 
@@ -31,9 +32,8 @@ lpr = length(pr);
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
 for j2=1:17;
-    w(17-(j2-1))=((w0^0.5)*pr(lpr-10*(j2-1)).^0.5);
+    w(17-(j2-1))=w00*(pr(lpr-10*(j2-1)).^0.5);
 end
-    
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(17)n dt) to complete one full oscillation
@@ -41,7 +41,7 @@ dt=(2*pi)/(20*w(17));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps=20;
+ESsteps = 1000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -50,11 +50,11 @@ EST = ESsteps*dt;
 % for different parameters, depending how sensitive they are
 scale = (High_limit-Low_limit);
 
-alpha = scale/100;
+alpha = 0.01+zeros(1,17);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = scale/100;
+gain = 0.01+zeros(1,17);
 
 
 
@@ -82,7 +82,11 @@ cost=zeros(1,ESsteps);
     params(17,1) = PARAM.LI20.T166; % 2nd Order Dispersion
 
 tic
+
+
+
 for j=1:ESsteps-1;
+    j
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -100,8 +104,10 @@ for j=1:ESsteps-1;
     % Set Cost as the value of the residual
     cost(j) = residual;
     
+    params(:,j)=params(:,j)./max(abs(High_limit),abs(Low_limit));
+    
     for k = 1:17;
-        params(k,j+1)=params(k,j)+dt*(cos(w(k)*j*dt+gain(k)*(cost(j))*(alpha(k)*w(k))^0.5));
+        params(k,j+1)=params(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
         if params(k,j+1) < Low_limit(k);
             params(k,j+1) = Low_limit(k);
         else if params(k,j+1) > High_limit(k);
@@ -110,24 +116,26 @@ for j=1:ESsteps-1;
         end
     end
     
-    PARAM.INIT.SIGZ0 = params(1,j+1);       % Bunch Length
-    PARAM.INIT.SIGD0 = params(2,j+1);       % Initial Energy Spread
-    PARAM.INIT.NPART = params(3,j+1);       % Number of Particles
-    PARAM.INIT.ASYM = params(4,j+1);        % Initial Gaussian Asymmetry
-    PARAM.NRTL.AMPL = params(5,j+1);        % Amplitude of RF Compressor
-    PARAM.NRTL.PHAS = params(6,j+1);        % RF Compressor Phase
-    PARAM.NRTL.ELO = params(7,j+1);         % Low Energy Cutoff
-    PARAM.NRTL.EHI = params(8,j+1);         % High Energy Cutoff
-    decker = params(9,j+1);                 % 2-10 Phase
-    ramp = params(10,j+1);                   % Ramp Phase
-    PARAM.LI10.ELO = params(11,j+1);         % Low Energy Cutoff
-    PARAM.LI10.EHI = params(12,j+1);         % High Energy Cutoff
-    PARAM.LI20.ELO = params(13,j+1);         % Low Energy Cutoff
-    PARAM.LI20.EHI = params(14,j+1);         % High Energy Cutoff
-    PARAM.LI20.BETA = params(15,j+1);        % Beta Function
-    PARAM.LI20.R16 = params(16,j+1);         % Dispersion
-    PARAM.LI20.T166 = params(17,j+1);        % 2nd Order Dispersion
+    params(:,j)=params(:,j).*max(abs(High_limit),abs(Low_limit));
     
+    PARAM.INIT.SIGZ0 = params(1,j+1);           % Bunch Length
+    PARAM.INIT.SIGD0 = params(2,j+1);           % Initial Energy Spread
+    PARAM.INIT.NPART = params(3,j+1);           % Number of Particles
+    PARAM.INIT.ASYM = params(4,j+1);            % Initial Gaussian Asymmetry
+    PARAM.NRTL.AMPL = params(5,j+1);            % Amplitude of RF Compressor
+    PARAM.NRTL.PHAS = params(6,j+1);            % RF Compressor Phase
+    PARAM.NRTL.ELO = params(7,j+1);             % Low Energy Cutoff
+    PARAM.NRTL.EHI = params(8,j+1);             % High Energy Cutoff
+    decker = params(9,j+1);                     % 2-10 Phase
+    ramp = params(10,j+1);                      % Ramp Phase
+    PARAM.LI10.ELO = params(11,j+1);            % Low Energy Cutoff
+    PARAM.LI10.EHI = params(12,j+1);            % High Energy Cutoff
+    PARAM.LI20.ELO = params(13,j+1);            % Low Energy Cutoff
+    PARAM.LI20.EHI = params(14,j+1);            % High Energy Cutoff
+    PARAM.LI20.BETA = params(15,j+1);           % Beta Function
+    PARAM.LI20.R16 = params(16,j+1);            % Dispersion
+    PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
+       
 end
 toc
 
