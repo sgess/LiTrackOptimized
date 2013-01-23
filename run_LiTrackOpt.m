@@ -20,8 +20,8 @@ sim_params;
 %
 
 % Create the w values, w0 scales all of them
-w0=10000;
-w00=500;
+w0=40000;
+w00=50000;
 
 w=zeros(1,17);
 
@@ -32,7 +32,7 @@ lpr = length(pr);
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
 for j2=1:17;
-    w(17-(j2-1))=w00*(pr(lpr-40*(j2-1)).^0.5);
+    w(17-(j2-1))=(w00*pr(lpr-40*(j2-1)).^0.5);
 end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
@@ -48,8 +48,8 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 300*ones(1,17);
-alpha(2)=10;
+alpha = 3000*ones(1,17);
+alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
@@ -175,7 +175,7 @@ end
     OUT = LiTrackOpt('FACETpar');
     
     % Interpolate simulated spectrum
-    sim_spectrum = interpSim(OUT,spectrum_axis);
+    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN);
     
     % Calculate residual
     residual = sum((sim_spectrum - data_spectrum).^2);
