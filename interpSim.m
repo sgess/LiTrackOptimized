@@ -1,7 +1,7 @@
-function SIM_SPEC = interpSim(OUT,spectrum_axis)
+function SIM_SPEC = interpSim(OUT,spectrum_axis,nBin)
 
 % Identify Max and Min of Simulated energy distribution
-x_max = OUT.X.AXIS(256);
+x_max = OUT.X.AXIS(nBin);
 x_min = OUT.X.AXIS(1);
 
 % Find the Max and Min on the YAG energy axis
@@ -10,7 +10,7 @@ x_min = OUT.X.AXIS(1);
 N = iMax - iMin + 1;
 
 % Interpolate the simulated distribution onto the YAG axis
-xx = linspace(1,256,N);
+xx = linspace(1,nBin,N);
 SX = interp1(OUT.X.HIST,xx);
 sim_sum = sum(SX);
 sim_cen = round(sum((1:N).*SX)/sim_sum);

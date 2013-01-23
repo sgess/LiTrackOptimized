@@ -98,7 +98,7 @@ jc     = 0;                         % start with zero output locations (where co
 % =======================
 
 inpf = 'gaussian random';			% text to put on plots
-rGen = rng(seed,'twister');                   % set the gaussian random generator seed
+%rGen = rng(seed,'twister');                   % set the gaussian random generator seed
 d0 = sigd0*randn(Nesim,1) + d0_bar;	% always gaussian dE/E
 z0 = asym_gaussian(Nesim,sigz0,z0_bar,...
     asym,cut,tail,halo,halo_pop);	% generate asymmetric gaussian with cuts & tails

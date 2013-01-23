@@ -41,7 +41,7 @@ dt=(2*pi)/(20*w(17));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 2000;
+ESsteps = 40000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -96,7 +96,7 @@ for j=1:ESsteps-1;
     OUT = LiTrackOpt('FACETpar');
     
     % Interpolate simulated spectrum
-    sim_spectrum = interpSim(OUT,spectrum_axis);
+    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN);
     
     % Calculate residual
     residual = sum((sim_spectrum - data_spectrum).^2);
