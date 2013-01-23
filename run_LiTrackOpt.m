@@ -32,7 +32,7 @@ lpr = length(pr);
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
 for j2=1:17;
-    w(17-(j2-1))=w00*(pr(lpr-10*(j2-1)).^0.5);
+    w(17-(j2-1))=w00*(pr(lpr-40*(j2-1)).^0.5);
 end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
@@ -41,18 +41,19 @@ dt=(2*pi)/(20*w(17));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 1000;
+ESsteps = 2000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = ones(1,17);
+alpha = 300*ones(1,17);
+alpha(2)=10;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = ones(1,17);
+gain = 40000*ones(1,17);
 
 
 
@@ -138,7 +139,52 @@ for j=1:ESsteps-1;
 end
 toc
 
+% Average each parameter over one full 2Pi cycle, to get the equilibrium
+% parameter about which it has settled.
+
+aveparams=zeros(1,17);
+for ja=1:17;
+    for jb=1:ceil(2*pi/(w(ja)*dt));
+        aveparams(ja)=aveparams(ja)+(1/(ceil(2*pi/(w(ja)*dt))))*params(ja,j-jb);
+    end
+end
+
+    PARAM.INIT.SIGZ0 = aveparams(1);           % Bunch Length
+    PARAM.INIT.SIGD0 = aveparams(2);           % Initial Energy Spread
+    PARAM.INIT.NPART = aveparams(3);           % Number of Particles
+    PARAM.INIT.ASYM = aveparams(4);            % Initial Gaussian Asymmetry
+    PARAM.NRTL.AMPL = aveparams(5);            % Amplitude of RF Compressor
+    PARAM.NRTL.PHAS = aveparams(6);            % RF Compressor Phase
+    PARAM.NRTL.ELO = aveparams(7);             % Low Energy Cutoff
+    PARAM.NRTL.EHI = aveparams(8);             % High Energy Cutoff
+    decker = aveparams(9);                     % 2-10 Phase
+    ramp = aveparams(10);                      % Ramp Phase
+    PARAM.LI10.ELO = aveparams(11);            % Low Energy Cutoff
+    PARAM.LI10.EHI = aveparams(12);            % High Energy Cutoff
+    PARAM.LI20.ELO = aveparams(13);            % Low Energy Cutoff
+    PARAM.LI20.EHI = aveparams(14);            % High Energy Cutoff
+    PARAM.LI20.BETA = aveparams(15);           % Beta Function
+    PARAM.LI20.R16 = aveparams(16);            % Dispersion
+    PARAM.LI20.T166 = aveparams(17);           % 2nd Order Dispersion
+
+    PARAM.LONE.PHAS = decker+ramp;  % Total Phase
+    PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+
+    
+    % Run LiTrack
+    OUT = LiTrackOpt('FACETpar');
+    
+    % Interpolate simulated spectrum
+    sim_spectrum = interpSim(OUT,spectrum_axis);
+    
+    % Calculate residual
+    residual = sum((sim_spectrum - data_spectrum).^2);
+    
+    % Set Cost as the value of the residual
+    cost(j+1) = residual;
+
 % Plot Output
+figure(1)
 plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
 legend('DATA','SIMULATION');
 xlabel('X (mm)','fontsize',14);
