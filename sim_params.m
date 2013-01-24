@@ -65,3 +65,4 @@ PARAM.LI20.R16   = 120;     % Dispersion at YAG
 PARAM.LI20.T166  = 1000;    % Second order dispersion at YAG
 PARAM.LI20.BETA  = 5;       % Beta function at YAG
 PARAM.LI20.EMIT  = 100e-6;  % Emittance in S20
+delta            = 0.0;     % Energy offset

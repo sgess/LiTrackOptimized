@@ -18,7 +18,7 @@ sim_params;
 w0=1000;
 w00=5000;
 
-w=zeros(1,17);
+w=zeros(1,18);
 
 pr = primes(w0);
 lpr = length(pr);
@@ -26,13 +26,13 @@ lpr = length(pr);
 % The w(i) values are w(i) = sqrt(pi), where p1,...,p17 are the 17 primes less than w0. 
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
-for j2=1:17;
-    w(17-(j2-1))=w00*(pr(lpr-10*(j2-1)).^0.5);
+for j2=18:-1:1;
+    w(j2)=w00*(pr(lpr-5*j2).^0.5);
 end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(17)n dt) to complete one full oscillation
-dt=(2*pi)/(20*w(17));
+dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
@@ -43,19 +43,19 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 4000*ones(1,17);
+alpha = 1000*ones(1,18);
 %alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 4000*ones(1,17);
+gain = 1000*ones(1,18);
 
 
 
 % Vector of 17 parameters that we will optimize
 
-params=zeros(17,ESsteps);
-pscaled=zeros(17,ESsteps);
+params=zeros(18,ESsteps);
+pscaled=zeros(18,ESsteps);
 cost=zeros(1,ESsteps);
 
     params(1,1) = PARAM.INIT.SIGZ0;     % Bunch Length
@@ -75,6 +75,7 @@ cost=zeros(1,ESsteps);
     params(15,1) = PARAM.LI20.BETA;     % Beta Function
     params(16,1) = PARAM.LI20.R16;      % Dispersion
     params(17,1) = PARAM.LI20.T166;     % 2nd Order Dispersion
+    params(18,1) = delta;               % Energy offset
 
 tic
 
@@ -91,7 +92,7 @@ for j=1:ESsteps-1;
     OUT = LiTrackOpt('FACETpar');
     
     % Interpolate simulated spectrum
-    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN);
+    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
     residual = sum((sim_spectrum - data_spectrum).^2);
@@ -101,7 +102,7 @@ for j=1:ESsteps-1;
     
     %pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
-    for k = 1:17;
+    for k = 1:18;
         pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
@@ -130,6 +131,7 @@ for j=1:ESsteps-1;
     PARAM.LI20.BETA = params(15,j+1);           % Beta Function
     PARAM.LI20.R16 = params(16,j+1);            % Dispersion
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
+    delta = params(18,j+1);                     % Energy offset
        
 end
 toc

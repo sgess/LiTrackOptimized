@@ -14,7 +14,8 @@ par_name = {'Initial bunch length';
             'S20 High-energy cutoff';
             'S20 Beta';
             'YAG Dispersion';
-            'YAG 2nd Order Dispersion';};
+            'YAG 2nd Order Dispersion';
+            'Energy Offset';};
 
 % Lower limit on params    
 Low_limit = [5e-3;
@@ -33,7 +34,8 @@ Low_limit = [5e-3;
              0.02;
              2;
              90;
-             0;];
+             0;
+             -0.01;];
          
 % Higher limit on params                 
 High_limit= [10e-3;
@@ -52,7 +54,8 @@ High_limit= [10e-3;
              0.04;
              6;
              130;
-             2000;];
+             2000;
+             0.01;];
          
 Cent=(High_limit+Low_limit)/2;
 Diff=High_limit-Low_limit;
