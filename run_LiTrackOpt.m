@@ -20,13 +20,8 @@ sim_params;
 %
 
 % Create the w values, w0 scales all of them
-<<<<<<< HEAD
 w0=40000;
 w00=50000;
-=======
-w0=1000;
-w00=5000;
->>>>>>> Only Changed w and gain
 
 w=zeros(1,17);
 
@@ -37,11 +32,7 @@ lpr = length(pr);
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
 for j2=1:17;
-<<<<<<< HEAD
     w(17-(j2-1))=(w00*pr(lpr-40*(j2-1)).^0.5);
-=======
-    w(17-(j2-1))=w00*(pr(lpr-10*(j2-1)).^0.5);
->>>>>>> Only Changed w and gain
 end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
@@ -50,27 +41,19 @@ dt=(2*pi)/(20*w(17));
 
 
 % Total Number of Extremum Seeking Steps
-<<<<<<< HEAD
 ESsteps = 40000;
-=======
-ESsteps = 6000;
->>>>>>> Only Changed w and gain
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-<<<<<<< HEAD
 alpha = 3000*ones(1,17);
-=======
-alpha = 300*ones(1,17);
->>>>>>> Only Changed w and gain
 alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 1000*ones(1,17);
+gain = 40000*ones(1,17);
 
 
 
