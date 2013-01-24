@@ -36,20 +36,20 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 40000;
+ESsteps = 1500;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 1000*ones(1,18);
+alpha = 1500*ones(1,18);
 %alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 1000*ones(1,18);
-
+gain = 3000*ones(1,18);
+min_slope = 0.005;
 
 
 % Vector of 17 parameters that we will optimize
@@ -100,6 +100,16 @@ for j=1:ESsteps-1;
     % Set Cost as the value of the residual
     cost(j) = residual;
     
+    % Modify gain
+    if j > 150
+        c1 = mean(cost((j-150):(j-101)));
+        c2 = mean(cost((j-50):(j-1)));
+        dcost = abs((c2-c1)/100);
+        if dcost < min_slope;
+            gain = min_slope*gain/dcost;
+        end
+    end
+    
     %pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
     for k = 1:18;
@@ -132,7 +142,10 @@ for j=1:ESsteps-1;
     PARAM.LI20.R16 = params(16,j+1);            % Dispersion
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
     delta = params(18,j+1);                     % Energy offset
-       
+    
+    figure(1);
+    plot(cost);
+    axis([0 ESsteps 0 1e-3]);
 end
 toc
 
