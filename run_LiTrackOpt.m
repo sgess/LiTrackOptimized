@@ -36,19 +36,19 @@ dt=(2*pi)/(20*w(17));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 600;
+ESsteps = 200;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 3000*ones(1,17);
-alpha(2)=100;
+alpha = 4000*ones(1,17);
+%alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 1000*ones(1,17);
+gain = 4000*ones(1,17);
 
 
 
@@ -58,23 +58,23 @@ params=zeros(17,ESsteps);
 pscaled=zeros(17,ESsteps);
 cost=zeros(1,ESsteps);
 
-    params(1,1) = PARAM.INIT.SIGZ0; % Bunch Length
-    params(2,1) = PARAM.INIT.SIGD0; % Initial Energy Spread
-    params(3,1) = PARAM.INIT.NPART; % Number of Particles
-    params(4,1) = PARAM.INIT.ASYM;  % Initial Gaussian Asymmetry
-    params(5,1) = PARAM.NRTL.AMPL;  % Amplitude of RF Compressor
-    params(6,1) = PARAM.NRTL.PHAS;  % RF Compressor Phase
-    params(7,1) = PARAM.NRTL.ELO;   % Low Energy Cutoff
-    params(8,1) = PARAM.NRTL.EHI;   % High Energy Cutoff
-    params(9,1) = decker;           % 2-10 Phase
-    params(10,1) = ramp;            % Ramp Phase
-    params(11,1) = PARAM.LI10.ELO;  % Low Energy Cutoff
-    params(12,1) = PARAM.LI10.EHI;  % High Energy Cutoff
-    params(13,1) = PARAM.LI20.ELO;  % Low Energy Cutoff
-    params(14,1) = PARAM.LI20.EHI;  % High Energy Cutoff
-    params(15,1) = PARAM.LI20.BETA; % Beta Function
-    params(16,1) = PARAM.LI20.R16;  % Dispersion
-    params(17,1) = PARAM.LI20.T166; % 2nd Order Dispersion
+    params(1,1) = PARAM.INIT.SIGZ0;     % Bunch Length
+    params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
+    params(3,1) = PARAM.INIT.NPART;     % Number of Particles
+    params(4,1) = PARAM.INIT.ASYM;      % Initial Gaussian Asymmetry
+    params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
+    params(6,1) = PARAM.NRTL.PHAS;      % RF Compressor Phase
+    params(7,1) = PARAM.NRTL.ELO;       % Low Energy Cutoff
+    params(8,1) = PARAM.NRTL.EHI;       % High Energy Cutoff
+    params(9,1) = decker;               % 2-10 Phase
+    params(10,1) = ramp;                % Ramp Phase
+    params(11,1) = PARAM.LI10.ELO;      % Low Energy Cutoff
+    params(12,1) = PARAM.LI10.EHI;      % High Energy Cutoff
+    params(13,1) = PARAM.LI20.ELO;      % Low Energy Cutoff
+    params(14,1) = PARAM.LI20.EHI;      % High Energy Cutoff
+    params(15,1) = PARAM.LI20.BETA;     % Beta Function
+    params(16,1) = PARAM.LI20.R16;      % Dispersion
+    params(17,1) = PARAM.LI20.T166;     % 2nd Order Dispersion
 
 tic
 
@@ -138,6 +138,6 @@ toc
 % Plot Output
 figure(1)
 plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
-legend('DATA','SIMULATION');
+legend('DATA','ES-SIMULATION');
 xlabel('X (mm)','fontsize',14);
 text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
