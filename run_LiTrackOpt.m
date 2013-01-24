@@ -139,9 +139,9 @@ for j=1:ESsteps-1;
     delta = params(18,j+1);                     % Energy offset
     
     figure(1);
-    plot(cost);
+    plot(1:ESsteps,cost,'b',1:ESsteps,residual*10000,'r',1:ESsteps,5*(1-Part_frac),'g');
     %axis([0 ESsteps 0 1e-3]);
-    axis([0 ESsteps 5 9]);
+    axis([0 ESsteps 0 9]);
 end
 toc
 
