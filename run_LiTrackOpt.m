@@ -36,7 +36,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 1500;
+ESsteps = 500;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -48,7 +48,7 @@ alpha = 1500*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 3000*ones(1,18);
+gain = ones(1,18);
 min_slope = 0.005;
 
 
@@ -57,6 +57,8 @@ min_slope = 0.005;
 params=zeros(18,ESsteps);
 pscaled=zeros(18,ESsteps);
 cost=zeros(1,ESsteps);
+Part_frac=zeros(1,ESsteps);
+residual=zeros(1,ESsteps);
 
     params(1,1) = PARAM.INIT.SIGZ0;     % Bunch Length
     params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
@@ -90,25 +92,18 @@ for j=1:ESsteps-1;
     
     % Run LiTrack
     OUT = LiTrackOpt('FACETpar');
+    Part_frac(j) = 1 - OUT.I.PART(2)/PARAM.INIT.NESIM;
+    
     
     % Interpolate simulated spectrum
     sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
-    residual = sum((sim_spectrum - data_spectrum).^2);
+    residual(j) = sum((sim_spectrum - data_spectrum).^2);
     
     % Set Cost as the value of the residual
-    cost(j) = residual;
-    
-    % Modify gain
-    if j > 150
-        c1 = mean(cost((j-150):(j-101)));
-        c2 = mean(cost((j-50):(j-1)));
-        dcost = abs((c2-c1)/100);
-        if dcost < min_slope;
-            gain = min_slope*gain/dcost;
-        end
-    end
+    %cost(j) = residual;
+    cost(j) = 14 + log(residual(j)) + 2*Part_frac(j);
     
     %pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
@@ -145,7 +140,8 @@ for j=1:ESsteps-1;
     
     figure(1);
     plot(cost);
-    axis([0 ESsteps 0 1e-3]);
+    %axis([0 ESsteps 0 1e-3]);
+    axis([0 ESsteps 5 9]);
 end
 toc
 
@@ -155,4 +151,4 @@ figure(1)
 plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
 legend('DATA','ES-SIMULATION');
 xlabel('X (mm)','fontsize',14);
-text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
+text(-3.5,5e-3,['Residual = ' num2str(residual(j-1),'%0.2e')],'fontsize',14);
