@@ -36,7 +36,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 500;
+ESsteps = 50;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -105,7 +105,7 @@ for j=1:ESsteps-1;
     %cost(j) = residual;
     cost(j) = 14 + log(residual(j)) + 2*Part_frac(j);
     
-    %pscaled(:,j)=(params(:,j)-Cent)./Diff;
+    pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
     for k = 1:18;
         pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
@@ -139,7 +139,7 @@ for j=1:ESsteps-1;
     delta = params(18,j+1);                     % Energy offset
     
     figure(1);
-    plot(1:ESsteps,cost,'b',1:ESsteps,residual*10000,'r',1:ESsteps,5*(1-Part_frac),'g');
+    plot(1:ESsteps,cost,'b',1:ESsteps,residual*5000,'r',1:ESsteps,5*(1-Part_frac),'g');
     %axis([0 ESsteps 0 1e-3]);
     axis([0 ESsteps 0 9]);
 end
