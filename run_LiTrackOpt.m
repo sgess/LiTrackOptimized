@@ -36,7 +36,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 2000;
+ESsteps = 4000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -101,9 +101,9 @@ for j=1:ESsteps-1;
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 1.0*Part_frac(j);
+    cost(j) = 14 + log(residual(j)) + 0.5*Part_frac(j);
     
-    pscaled(:,j)=(params(:,j)-Cent)./Diff;
+    pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
     for k = 1:18;
         pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
@@ -115,7 +115,7 @@ for j=1:ESsteps-1;
         end
     end
     
-    params(:,j+1)=Diff.*pscaled(:,j+1)+Cent;
+    params(:,j+1)=Diff.*pscaled(:,j+1)/2+Cent;
     
     PARAM.INIT.SIGZ0 = params(1,j+1);           % Bunch Length
     PARAM.INIT.SIGD0 = params(2,j+1);           % Initial Energy Spread
