@@ -36,14 +36,14 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 4000;
+ESsteps = 40000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 1500*ones(1,18);
+alpha = 2000*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
@@ -101,7 +101,7 @@ for j=1:ESsteps-1;
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 0.5*Part_frac(j);
+    cost(j) = 14 + log(residual(j)) + 0.1*Part_frac(j);
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
