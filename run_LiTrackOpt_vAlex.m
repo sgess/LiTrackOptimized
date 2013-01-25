@@ -46,7 +46,7 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 2000*ones(1,18);
+alpha = 1000*ones(1,18);
 %alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
