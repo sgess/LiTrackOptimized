@@ -51,7 +51,7 @@ alpha = 1000*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 40000*ones(1,18);
+gain = 80000*ones(1,18);
 
 % Save end-of-simulation parameters to use as initial conditions for the
 % next simulation
