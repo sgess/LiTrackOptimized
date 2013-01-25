@@ -4,7 +4,7 @@ fontsize = 14;
 
 % Load sample spectra
 load('data_samples.mat');
-data_spectrum = SPECTRA(:,1)/sum(SPECTRA(:,1));
+data_spectrum = SPECTRA(:,44)/sum(SPECTRA(:,44));
 
 % Create Parameter struct
 global PARAM;
@@ -36,7 +36,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 50;
+ESsteps = 500;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -44,12 +44,10 @@ EST = ESsteps*dt;
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
 alpha = 1500*ones(1,18);
-%alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
 gain = ones(1,18);
-min_slope = 0.005;
 
 
 % Vector of 17 parameters that we will optimize
@@ -103,7 +101,7 @@ for j=1:ESsteps-1;
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 2*Part_frac(j);
+    cost(j) = 14 + log(residual(j)) + 1.5*Part_frac(j);
     
     pscaled(:,j)=(params(:,j)-Cent)./Diff;
     
