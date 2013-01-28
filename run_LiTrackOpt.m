@@ -4,13 +4,14 @@ fontsize = 14;
 
 % Load sample spectra
 load('data_samples.mat');
-data_spectrum = SPECTRA(:,44)/sum(SPECTRA(:,44));
+data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
 
 % Create Parameter struct
 global PARAM;
 
 % Parameter limit file
-par_limits;
+%par_limits;
+new_par_lims;
 
 % Set Parameter guess values
 sim_params;
@@ -36,7 +37,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 2000;
+ESsteps = 10000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -101,7 +102,7 @@ for j=1:ESsteps-1;
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 0.01*Part_frac(j);
+    cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
