@@ -26,7 +26,6 @@ nn = length(z);
 sigz = std(z);
 
 % Wakefile: A(:,1) = Z (m), A(:,2) = W(Z) (V/C/m)
-fn = strtrim(fn);
 A  = load(fn);
 nA = length(A);
 
@@ -42,7 +41,7 @@ N = [0 N 0];
 N = N';
 
 % max Z in wake file (last point usually projected estimate)
-maxz_fn = A(nA-1,1);
+maxz_fn = A(nA-1);
 if (zc(Nbin)-zc(1)) > maxz_fn
     disp(' ')
     disp(['WARNING: maximum axial spread is > ' num2str(maxz_fn*1e3) ' mm and ' fn ' is inaccurate there'])
