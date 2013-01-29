@@ -2,8 +2,8 @@
 PARAM.SIMU.PLOT  = 0;       % Small plots?
 PARAM.SIMU.FRAC  = 0.05;    % Fraction of sim particles to plot
 PARAM.SIMU.BIN   = 128;     % Number of historgram bins
-PARAM.SIMU.ZFIT  = 1;       % Longitudinal gauss fit
-PARAM.SIMU.DFIT  = 1;       % Energy gauss fit
+PARAM.SIMU.ZFIT  = 0;       % Longitudinal gauss fit
+PARAM.SIMU.DFIT  = 0;       % Energy gauss fit
 PARAM.SIMU.CONT  = 0;       % Contour plot
 
 % Machine energy constraints

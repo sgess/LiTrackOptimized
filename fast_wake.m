@@ -26,8 +26,9 @@ nn = length(z);
 sigz = std(z);
 
 % Wakefile: A(:,1) = Z (m), A(:,2) = W(Z) (V/C/m)
-fn = strtrim(fn);
-A  = load(fn);
+%fn = strtrim(fn);
+%A  = load(fn);
+global A;
 nA = length(A);
 
 % Histogram particles into Nbins with zeros at ends for interpolation

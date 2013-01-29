@@ -6,6 +6,10 @@ fontsize = 14;
 load('data_samples.mat');
 data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
 
+% load wakefield data
+global A;
+A = load('slac.dat');
+
 % Create Parameter struct
 global PARAM;
 
@@ -37,7 +41,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 10000;
+ESsteps = 20;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -137,10 +141,10 @@ for j=1:ESsteps-1;
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
     delta = params(18,j+1);                     % Energy offset
     
-    figure(1);
-    plot(1:ESsteps,cost,'b',1:ESsteps,residual*5000,'r',1:ESsteps,5*(1-Part_frac),'g');
+    %figure(1);
+    %plot(1:ESsteps,cost,'b',1:ESsteps,residual*5000,'r',1:ESsteps,5*(1-Part_frac),'g');
     %axis([0 ESsteps 0 1e-3]);
-    axis([0 ESsteps 0 9]);
+    %axis([0 ESsteps 0 9]);
 end
 toc
 

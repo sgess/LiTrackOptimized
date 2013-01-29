@@ -529,206 +529,13 @@ for j  = 1:nb					% loop over all beamline sections of BL-file
       gam = Ebar*1000/0.510998928;
       sig = 1000*sqrt(beta*emit/gam);
       XX = r16*d + t166*d.^2 + sig*randn(length(d),1);
-  end 
-  ii = find(z);
-  z_bar = 1E3*mean(z(ii));	% mean z-pos AFTER CUTS [mm]
-  if cod < 0 || cod == 99    % plot after each negative code point in beamline
-    if nargout < 1
-      zmm  = z*1E3;			% convert to [mm]
-      dpct = d*100;			% convert to [%]
-      sigzmm  = std(zmm);   % rms [mm]
-      sigdpct = std(dpct);	% rms [%]
-      jf = jf + 1;			% count plots to make separate figure windows
-      fh = figure(jf);		% open new figure window
-      clf;					% clear figure
-      fprintf('New figure %2.0f created\n',jf)
-     
-      subplot(2,nn,pz)
-      [Nz1,Z] = hist(zmm,Nbin);		% bin the Z-distribution
-      ZFWmm = FWHM(Z,Nz1,0.5);		% calc. Z-FWHM [mm]
-      dZ = mean(diff(Z));    	    % Z bin size [mm]
-      I  = Nz1*(Ne1/1E10/Nesim)*elec*cspeed/dZ;	% convert N to peak current [kA]
-	  I_pk = max(I);
-      nZ = length(Z);
-      Z  = [Z(1)-dZ Z(:)' Z(nZ)+dZ];	% add charge=0 end-points to distribution
-      I = [0 I(:)' 0];				    %  "    "        "        "    "
-      stairs(Z,I,'b-');				    % plot in kAmps vs. mm
-      if sigzmm < 0.1                   % switch to microns if sigz_rms < 0.1 mm
-        zscl = 1E3;
-        zunt = ' \mum';
-      else
-        zscl = 1;
-        zunt = ' mm';
-      end
-	  if sigzmm < 0.0005
-        zscl = 1E6;
-        zunt = ' nm';
-	  end
-      if splots==0
-          ttl = ['{\it\sigma_z}=' sprintf('%5.3f',sigzmm*zscl) zunt ' (fwhm=' sprintf('%5.3f',ZFWmm*zscl)];
-      else
-          ttl = ['{\it\sigma_z}=' sprintf('%5.3f',sigzmm*zscl) zunt ' '];
-      end
-      if gzfit
-        hold on
-        [yf,q,dq] = gauss_fit(Z,I,1E-3*ones(size(I)),1);
-        sigzG  = q(4);				% gaussian fit sigma_Z [mm]
-        plot(Z,yf,'r:')
-%        if splots==0
-          ttl = [ttl ', fit=' sprintf('%5.3f',sigzG*zscl)];
-%        end
-      end
-      if splots==0
-        ttl = [ttl ')'];
-      end
-      zmin = min(zmm);
-      zmax = max(zmm);
-      zwf  = (zmax-zmin)/20;
-      Imax = max(I);
-      if zcuts
-        axis([z1*1E3-zwf z2*1E3+zwf 0 Imax*1.05])
-        ver_line(z1*1E3)
-        ver_line(z2*1E3)
-      else
-        axis([zmin-zwf zmax+zwf 0 Imax*1.05])
-      end
-      axis([zmin-zwf zmax+zwf 0 Imax*1.05])
-      xlabel('{\itz} /mm')
-      Hy=ylabel('{\itI} /kA');
-      set(Hy,'VerticalAlignment','baseline');
-      if splots==0
-          H = text(zmin+(zmax-zmin+2*zwf)*0.54,Imax*0.97,['{\itI_{pk}}=' sprintf('%5.3f kA',I_pk)]);
-      end
-      title(ttl)
-      hold off
-      enhance_plot('times',fontsize,1)
-    
-      subplot(2,nn,1)
-      [Nd,D] = hist(dpct,Nbin);
-      Nd     = Nd/1E3;
-      dFWpct = FWHM(D,Nd,0.5);			    % calc. dE/E-FWHM [%]
-      dD = mean(diff(D));               	% D bin size [%]
-      nD = length(D);
-      D  = [D(1)-dD D(:)' D(nD)+dD];		% add charge=0 end-points to distribution
-      Nd = [0 Nd 0];				        %  "    "        "        "    "
-      stairs(Nd,D,'g-');
-%      stairs(D,Nd,'g-');
-      if splots==0
-        ttl = ['{\it\sigma_E}/\langle{\itE}\rangle=' sprintf('%5.3f',sigdpct) '% (fwhm=' sprintf('%5.3f',dFWpct)];
-      else
-        ttl = ['{\it\sigma_E}/\langle{\itE}\rangle=' sprintf('%5.3f',sigdpct) '%'];
-      end
-      if gdfit
-        hold on
-        [yf,q,dq] = gauss_fit(D,Nd,1E-3*ones(size(Nd)),0);
-        sigEG = q(4);				% gaussian fit sigma_dE/E0 [%]
-        plot(yf,D,'r:')
-        if splots==0
-          ttl = [ttl ', fit=' sprintf('%5.3f',sigEG)];
-        end
-      end  
-      if splots==0
-        ttl = [ttl ')'];
-      end
-      dmin = min(dpct);
-      dmax = max(dpct);
-      dwf  = (dmax-dmin)/20;
-      Nmax = max(Nd);
-      if ecuts
-        axis([0 Nmax*1.05 d1*100-dwf d2*100+dwf])
-        hor_line(d1*100)
-        hor_line(d2*100)
-      else
-        axis([0 Nmax*1.05 dmin-dwf-1e-10 dmax+dwf+1E-10])
-%        axis([-5 5 0 Nmax*1.05])
-      end
-      Hy=ylabel('\Delta{\itE}/\langle{\itE}\rangle /%');
-%      Hy=xlabel('\Delta{\itE}/\langle{\itE}\rangle /%');
-      set(Hy,'VerticalAlignment','baseline');
-      xlabel('{\itn}/10^3')
-%      ylabel('{\itn}/10^3')
-      title(ttl)
-      hold off
-      enhance_plot('times',fontsize,1)
-      
-      if splots==0
-        str = ['Source: ' inpf];
-        if iswake
-          zc_wakemm = zc_wake*1E3;			% convert to [mm]    
-          subplot(2,nn,3)
-%          plot_spline(zc_wakemm,dE_wake,'.')
-           plot(zc_wakemm,dE_wake,'.m')
-          wmin = min(dE_wake);
-          wmax = max(dE_wake);
-          wwf  = (wmax-wmin)/20;
-          axis([zmin-zwf zmax+zwf wmin-wwf wmax+wwf])
-          xlabel('{\itz} /mm')
-          Hy=ylabel('\itV_{\rmind}\rm /MV');
-          set(Hy,'VerticalAlignment','baseline');
-          title(literal(str))
-          enhance_plot('times',fontsize,1)
-        else
-          H = text(scx(0.075),scy(0.2),literal(str));
-          set(H,'fontname','times')
-          set(H,'fontsize',12)
-        end
-      end 
+  end
   
-      i = 1:round(1/plot_frac):Nesim;
-      subplot(2,nn,2)
-
-      if contf
-  	    [X,Y,Z,dx,dy] = contour_plot(zmm,dpct,Nbin,Nbin,0);		% plot color image, rather than scatter plot
-		Zs = fast_smooth2(Z);
-		imagesc(X,Y,Zs);
-		axis xy
-      else
-	    plot(zmm(i),dpct(i),'.r')								% plot scatter plot, rather than color image
-      end
-      zmin = min(zmm(i));
-      zmax = max(zmm(i));
-      zwf  = (zmax-zmin)/20;
-      dmin = min(dpct(i));
-      dmax = max(dpct(i));
-      dwf  = (dmax-dmin)/20;
-      if ecuts
-        hor_line(d1*100)
-        hor_line(d2*100)
-        dm = d1*100-dwf;
-        dp = d2*100+dwf;
-      else
-        dm = dmin-dwf;
-        dp = dmax+dwf;
-      end
-      if zcuts
-        ver_line(z1*1E3)
-        ver_line(z2*1E3)
-        zm = z1*1E3-zwf;
-        zp = z2*1E3+zwf;
-      else
-        zm = zmin-zwf;
-        zp = zmax+zwf;
-      end
-      axis([zm zp dm-1E-10 dp+1E-10])
-      xlabel('{\itz} /mm')
-      Hy=ylabel('\Delta{\itE}/\langle{\itE}\rangle /%');
-      set(Hy,'VerticalAlignment','baseline');
-      title(['\langle{\itE}\rangle='     sprintf('%5.3f',Ebarcuts) ...
-             ' GeV, {\itN_e}=' sprintf('%5.3f',Ne1/1E10) '\times10^{10}'])
-      bml = num2str(beamline(j,:));
-      i   = findstr(bml,'  ');
-      bml(i) = [];
-      if splots==0
-        if abs(cod) ~= 99
-          text(scx(0.075),scy(0.02),[get_time ';  [' bml ']'])
-        else  
-          text(scx(0.075),scy(0.02),get_time)
-        end
-        H = text(zmin+(zmax-zmin+2*zwf)*0.54,dm+(dp-dm)*0.97/1.05,['\langle{\itz}\rangle=' sprintf('%5.3f mm',z_bar)]);
-        H = text(scx(0.075),scy(0.04),[literal(fnfm) ':  ' comment]);
-      end  
-      enhance_plot('times',fontsize,1,1)
-    else                                            % end nargout < 1 (i.e., end plots section)
+  %ii = find(z);
+  %z_bar = 1E3*mean(z(ii));	% mean z-pos AFTER CUTS [mm]
+  
+  if cod < 0 || cod == 99    % plot after each negative code point in beamline
+                                                % end nargout < 1 (i.e., end plots section)
       jc = jc + 1;                                  % count output locations (where cod < 0 | cod == 99)
       dE_Ej(1:length(d),jc) = d(:);
       zposj(1:length(z),jc) = z(:);
@@ -743,28 +550,27 @@ for j  = 1:nb					% loop over all beamline sections of BL-file
         ZFWmmj(jc) = FWHM(Z,Nz1,0.5);		        % calc. Z-FWHM [mm]
         dZ = mean(diff(Z));    	           	        % Z bin size [mm]
         I  = Nz1*(Ne1/1E10/Nesim)*elec*cspeed/dZ;	% convert N to peak current [kA]
-        %if nargout > 8
+        if gzfit
           [If,q,dq] = gauss_fit(Z,I,1E-3*ones(size(I)),0);
           sigzGj(jc) = q(4);				        % gaussian fit sigma_Z [mm]
-        %end
+          I_pkfj(jc) = max(If);
+        end
  		ii = find(dpct);
         [Nd,D]  = hist(dpct(ii),Nbin);			    % bin the dE/E-distribution
         HIST_D(1:Nbin,jc) = Nd;                            % I'll take that too
         AXIS_D(1:Nbin,jc) = D;                             % With the axis
         dFWpctj(jc) = FWHM(D,Nd,0.5);		        % calc. dE/E-FWHM [%]
-        z_barj(jc) = z_bar;
+        %z_barj(jc) = z_bar;
         Ebarcutsj(jc) = Ebarcuts;
-        %if nargout > 9
+        I_pk1 = max(I);
+        I_pkj(jc) = I_pk1;
+        if gdfit
           [yf,q,dq] = gauss_fit(D,Nd,1E-3*ones(size(Nd)),0);
           sigEGj(jc) = q(4);				        % gaussian fit sigma_dE/E0 [%]
-		  I_pk1 = max(I);
-          I_pkj(jc) = I_pk1;                        % peak current in bunch center [kA]
-		  I_pkfj(jc) = max(If);
-        %end  
+        end  
         %fcutj(jc)    = 1 - Ne1/Ne0;					% fraction of particles cut [ ]
         fcutj(jc) = Nesim;
       %end
-    end
   end                                               % end cod < 0 | cod == 99 stuff
   
   if abs(cod) == 99
@@ -776,20 +582,24 @@ if nargout == 1
     LT_OUTPUT.Z.DIST = zposj;
     LT_OUTPUT.Z.HIST = HIST_Z;
     LT_OUTPUT.Z.AXIS = AXIS_Z;
-    LT_OUTPUT.Z.AVG  = z_barj;
+    %LT_OUTPUT.Z.AVG  = z_barj;
     LT_OUTPUT.Z.FWHM = ZFWmmj;
-    LT_OUTPUT.Z.SIG  = sigzGj;
+    if gzfit
+        LT_OUTPUT.Z.SIG  = sigzGj;
+        LT_OUTPUT.I.SIG  = I_pkfj;
+    end
 
     LT_OUTPUT.E.DIST = dE_Ej;
     LT_OUTPUT.E.HIST = HIST_D;
     LT_OUTPUT.E.AXIS = AXIS_D;
     LT_OUTPUT.E.AVG  = Ebarj;
     LT_OUTPUT.E.FWHM = dFWpctj;
-    LT_OUTPUT.E.SIG  = sigEGj;
+    if gdfit
+        LT_OUTPUT.E.SIG  = sigEGj;
+    end
 
     LT_OUTPUT.I.PART = fcutj;
     LT_OUTPUT.I.PEAK = I_pkj;
-    LT_OUTPUT.I.SIG  = I_pkfj;
     
     if exist('XX','var')
         LT_OUTPUT.X.DIST = XX;
