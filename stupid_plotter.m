@@ -30,7 +30,7 @@ plot(cost(1:j-1))
 % Plot Cost
 
 figure(5)
-plot(pscaled(:,1:j-1)')
+plot(pscaled(:,2:j-1)')
 
 
 % Average each parameter over one full 2Pi cycle, to get the equilibrium

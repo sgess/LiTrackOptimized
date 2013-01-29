@@ -103,8 +103,7 @@ avecd=zeros(1,ESsteps);
 % the next run.
 
 bestparams=zeros(18,bsteps);
-global A;
-A = load('slac.dat');
+
 
 tic
 for jbest=1:bsteps;
