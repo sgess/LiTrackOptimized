@@ -36,7 +36,7 @@ dt=(2*pi)/(20*max(w));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 8000;
+ESsteps = 2000;
 
 % Number of times to run, re-set params, increase gain, and then run again
 bsteps = 1;
@@ -54,7 +54,7 @@ alpha = 20*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 240000*ones(1,18);
+gain = 60000*ones(1,18);
 
 
 % Vector of 18 parameters that we will optimize
@@ -103,8 +103,7 @@ avecd=zeros(1,ESsteps);
 % the next run.
 
 bestparams=zeros(18,bsteps);
-global A;
-A = load('slac.dat');
+
 
 tic
 for jbest=1:bsteps;
@@ -117,9 +116,8 @@ for j=1:ESsteps-1;
     jbest
     j
     
-    if j > 4000;
-        alpha = 10*ones(1,18);
-        gain = 480000*ones(1,18);
+    if j > 6000;
+        gain = 120000*ones(1,18);
     end
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
@@ -227,10 +225,10 @@ text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 
-
+%%
 
 % Save the results
-save('Jan_29_eps_zero')
+save('Jan_28_eps_zero')
 
 
 
@@ -289,12 +287,12 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 20*ones(1,18);
+alpha = 2000*ones(1,18);
 %alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 240000*ones(1,18);
+gain = 60000*ones(1,18);
 
 
 % Vector of 18 parameters that we will optimize
@@ -356,9 +354,8 @@ for j=1:ESsteps-1;
     jbest
     j
     
-    if j > 4000;
-        alpha = 10*ones(1,18);
-        gain = 480000*ones(1,18);
+    if j > 6000;
+        gain = 120000*ones(1,18);
     end
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
@@ -407,8 +404,7 @@ for j=1:ESsteps-1;
     %gain = gain + 2000*(1-exp(-j/8000));
     
     for k = 1:18;
-        %pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(jbest,j))*(alpha(k)*w(k))^0.5;
-        pscaled(k,j+1)=pscaled(k,j)+dt*(alpha(k)*(w(k)^0.5)*cos(w(k)*j*dt)-gain(k)*(w(k)^0.5)*sin(w(k)*j*dt)*cost(jbest,j));
+        pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(jbest,j))*(alpha(k)*w(k))^0.5;
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
         else if pscaled(k,j+1) > 1;
@@ -469,4 +465,4 @@ text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 % Save the results
-save('Jan_29_eps_NOTzero')
+save('Jan_28_eps_NOTzero')
