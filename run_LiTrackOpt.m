@@ -5,8 +5,9 @@ fontsize = 14;
 % Load sample spectra
 %load('data_samples.mat');
 load('data_sample_1103.mat');
-
-data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
+spec = mean(SPECTRA(:,:),2);
+%data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
+data_spectrum = spec/sum(spec);
 spectrum_axis = spectrum_axis/1000;
 
 % load wakefield data
@@ -44,7 +45,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 10000;
+ESsteps = 30000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
