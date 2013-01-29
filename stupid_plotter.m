@@ -36,12 +36,11 @@ plot(pscaled(:,1:j-1)')
 % Average each parameter over one full 2Pi cycle, to get the equilibrium
 % parameter about which it has settled.
 
+[y,mj] = min(cost(jbest,2:j-1));
+
 aveparams=zeros(1,18);
-for ja=1:17;
-    for jb=1:ceil(2*pi/(w(ja)*dt));
-        aveparams(ja)=aveparams(ja)+(1/(ceil(2*pi/(w(ja)*dt))))*params(ja,j-jb);
-    end
-end
+aveparams=params(:,mj);
+
 
     PARAM.INIT.SIGZ0 = aveparams(1);           % Bunch Length
     PARAM.INIT.SIGD0 = aveparams(2);           % Initial Energy Spread
