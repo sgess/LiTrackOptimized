@@ -154,10 +154,11 @@ for j  = 1:nb					% loop over all beamline sections of BL-file
       if wakeon > nwake_fn
         error('Need multiple wake function file names when "wakeON/OFF" > 1')
       end
-      wake_fn1 = wake_fn(wakeon,:);			        % select proper wake function depending on wakeon (=1,2,...)
+      wake_fn1 = strtrim(wake_fn(wakeon,:));			        % select proper wake function depending on wakeon (=1,2,...)
       disp(['Using wake function: ' wake_fn1])		% echo wake file being used
-      [dE_wake,zc_wake] = long_wake(z,Lacc,Ne1,...
-                          Nbin,wake_fn1);	        % calculate dE_wake in MeV from Z-coordinates, acc length, N-particles, etc.
+%       [dE_wake,zc_wake] = long_wake(z,Lacc,Ne1,...
+%                           Nbin,wake_fn1);	        % calculate dE_wake in MeV from Z-coordinates, acc length, N-particles, etc.
+      [dE_wake,zc_wake] = fast_wake(z,Lacc,Ne1,Nbin,wake_fn1);
       dE_wakes = interp1(zc_wake,dE_wake,z,'*linear');	% inerpolate between wake calc points in bunch to evaluate dE for each e-
       dE_loss = 1E-3*mean(dE_wakes);	% wake loss [GeV]
     else                    			% if wake calc switched OFF...
@@ -238,8 +239,9 @@ for j  = 1:nb					% loop over all beamline sections of BL-file
   	  pcwakeW = rw_wakefield(zpc,r0,s0,tau,rf);	% AC-wake
 	end
 	pcwake = [zpc(:) -pcwakeW(:)];
-    [dE_wake,zc_wake] = long_wake(z,Lng,Ne1,...
-								  Nbin,0,pcwake);	        % calculate dE_wake in MeV from Z-coordinates, acc length, N-particles, etc.
+    %[dE_wake,zc_wake] = long_wake(z,Lng,Ne1,...
+	%							  Nbin,0,pcwake);	        % calculate dE_wake in MeV from Z-coordinates, acc length, N-particles, etc.
+    [dE_wake,zc_wake] = fast_wake(z,Lacc,Ne1,Nbin,wake_fn1);                          
     dE_wakes = interp1(zc_wake,dE_wake,z,'*linear');		% inerpolate between wake calc points in bunch to evaluate dE for each e-
     dE_loss = 1E-3*mean(dE_wakes);	% wake loss [GeV]
     E = E + dE_wakes*1E-3;			% energy from RF phase and wake added [GeV]
