@@ -23,7 +23,7 @@ end
 % Plot all scaled parameters together
 
 figure(4)
-plot(cost(1:j-1))
+plot(cost(jbest,1:j-1))
 %hold on
 %plot(avec(1:j-1),'r')
 
@@ -33,15 +33,13 @@ figure(5)
 plot(pscaled(:,1:j-1)')
 
 
-% Average each parameter over one full 2Pi cycle, to get the equilibrium
-% parameter about which it has settled.
+% Find the best setting of the parameters
+[y,mj] = min(cost(1,2:j-1));
 
 aveparams=zeros(1,18);
-for ja=1:17;
-    for jb=1:ceil(2*pi/(w(ja)*dt));
-        aveparams(ja)=aveparams(ja)+(1/(ceil(2*pi/(w(ja)*dt))))*params(ja,j-jb);
-    end
-end
+
+aveparams(1,:)=params(:,mj);
+
 
     PARAM.INIT.SIGZ0 = aveparams(1);           % Bunch Length
     PARAM.INIT.SIGD0 = aveparams(2);           % Initial Energy Spread
@@ -76,29 +74,29 @@ end
     residual = sum((sim_spectrum - data_spectrum).^2);
     
     % Set Cost as the value of the residual
-    cost(j+1) = residual;
+    cost(jbest,j+1) = residual;
     
 
 % Compare to the initial conditions
 
-    PARAM.INIT.SIGZ0 = params(1,2);           % Bunch Length
-    PARAM.INIT.SIGD0 = params(2,2);           % Initial Energy Spread
-    PARAM.INIT.NPART = params(3,2);           % Number of Particles
-    PARAM.INIT.ASYM = params(4,2);            % Initial Gaussian Asymmetry
-    PARAM.NRTL.AMPL = params(5,2);            % Amplitude of RF Compressor
-    PARAM.NRTL.PHAS = params(6,2);            % RF Compressor Phase
-    PARAM.NRTL.ELO = params(7,2);             % Low Energy Cutoff
-    PARAM.NRTL.EHI = params(8,2);             % High Energy Cutoff
-    decker = params(9,2);                     % 2-10 Phase
-    ramp = params(10,2);                      % Ramp Phase
-    PARAM.LI10.ELO = params(11,2);            % Low Energy Cutoff
-    PARAM.LI10.EHI = params(12,2);            % High Energy Cutoff
-    PARAM.LI20.ELO = params(13,2);            % Low Energy Cutoff
-    PARAM.LI20.EHI = params(14,2);            % High Energy Cutoff
-    PARAM.LI20.BETA = params(15,2);           % Beta Function
-    PARAM.LI20.R16 = params(16,2);            % Dispersion
-    PARAM.LI20.T166 = params(17,2);           % 2nd Order Dispersion
-    delta = params(18,2);                     % Energy offset
+    PARAM.INIT.SIGZ0 = paramsorig(1);           % Bunch Length
+    PARAM.INIT.SIGD0 = paramsorig(2);           % Initial Energy Spread
+    PARAM.INIT.NPART = paramsorig(3);           % Number of Particles
+    PARAM.INIT.ASYM = paramsorig(4);            % Initial Gaussian Asymmetry
+    PARAM.NRTL.AMPL = paramsorig(5);            % Amplitude of RF Compressor
+    PARAM.NRTL.PHAS = paramsorig(6);            % RF Compressor Phase
+    PARAM.NRTL.ELO = paramsorig(7);             % Low Energy Cutoff
+    PARAM.NRTL.EHI = paramsorig(8);             % High Energy Cutoff
+    decker = paramsorig(9);                     % 2-10 Phase
+    ramp = paramsorig(10);                      % Ramp Phase
+    PARAM.LI10.ELO = paramsorig(11);            % Low Energy Cutoff
+    PARAM.LI10.EHI = paramsorig(12);            % High Energy Cutoff
+    PARAM.LI20.ELO = paramsorig(13);            % Low Energy Cutoff
+    PARAM.LI20.EHI = paramsorig(14);            % High Energy Cutoff
+    PARAM.LI20.BETA = paramsorig(15);           % Beta Function
+    PARAM.LI20.R16 = paramsorig(16);            % Dispersion
+    PARAM.LI20.T166 = paramsorig(17);           % 2nd Order Dispersion
+    delta = paramsorig(18);                     % Energy offset
 
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -125,6 +123,10 @@ text(-3.5,5e-3,['Residual after ES = ' num2str(residual,'%0.2e')],'fontsize',14)
 
 
 
-
+figure(9)
+for jpc=1:bsteps;
+    subplot(bsteps,1,jpc)
+    plot(cost(jpc,1:ESsteps-1))
+end
 
 
