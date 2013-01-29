@@ -41,7 +41,7 @@ dt=(2*pi)/(20*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 20;
+ESsteps = 5000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -106,7 +106,7 @@ for j=1:ESsteps-1;
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
+    cost(j) = 14 + log(residual(j)) + 0.0001*Part_frac(j);
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
