@@ -3,8 +3,8 @@ clear all;
 fontsize = 14;
 
 % Load sample spectra
-%load('data_samples.mat');
-%data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
+load('data_samples.mat');
+data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
 
 %load('data_sample_1103.mat');
 %spec = mean(SPECTRA(:,:),2);
@@ -12,11 +12,11 @@ fontsize = 14;
 %data_spectrum = SPECTRA(:,24)/sum(SPECTRA(:,24));
 %spectrum_axis = spectrum_axis/1000;
 
-load('data_samples_1443.mat');
+%load('data_samples_1443.mat');
 %spec = mean(SPECTRA(:,:),2);
 %data_spectrum = spec/sum(spec);
-data_spectrum = SPECTRA(:,1)/sum(SPECTRA(:,1));
-spectrum_axis = spectrum_axis/1000;
+%data_spectrum = SPECTRA(:,1)/sum(SPECTRA(:,1));
+%spectrum_axis = spectrum_axis/1000;
 
 
 % load wakefield data
