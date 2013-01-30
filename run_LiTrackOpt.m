@@ -6,11 +6,18 @@ fontsize = 14;
 %load('data_samples.mat');
 %data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
 
-load('data_sample_1103.mat');
+%load('data_sample_1103.mat');
 %spec = mean(SPECTRA(:,:),2);
 %data_spectrum = spec/sum(spec);
-data_spectrum = SPECTRA(:,24)/sum(SPECTRA(:,24));
+%data_spectrum = SPECTRA(:,24)/sum(SPECTRA(:,24));
+%spectrum_axis = spectrum_axis/1000;
+
+load('data_samples_1443.mat');
+%spec = mean(SPECTRA(:,:),2);
+%data_spectrum = spec/sum(spec);
+data_spectrum = SPECTRA(:,1)/sum(SPECTRA(:,1));
 spectrum_axis = spectrum_axis/1000;
+
 
 % load wakefield data
 global A;
@@ -21,7 +28,8 @@ global PARAM;
 
 % Parameter limit file
 %par_limits;
-new_par_lims;
+%new_par_lims;
+newer_par_lims;
 
 % Set Parameter guess values
 sim_params;
@@ -47,7 +55,7 @@ dt=(2*pi)/(8*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 300;
+ESsteps = 30000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -73,7 +81,8 @@ residual=zeros(1,ESsteps);
     params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
     params(3,1) = PARAM.INIT.NPART;     % Number of Particles
     params(4,1) = PARAM.INIT.ASYM;      % Initial Gaussian Asymmetry
-    params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
+    %params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
+    params(5,1) = 0.039;
     params(6,1) = PARAM.NRTL.PHAS;      % RF Compressor Phase
     params(7,1) = PARAM.NRTL.ELO;       % Low Energy Cutoff
     params(8,1) = PARAM.NRTL.EHI;       % High Energy Cutoff
@@ -151,31 +160,31 @@ for j=1:ESsteps-1;
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
     delta = params(18,j+1);                     % Energy offset
     
-    figure(1);
-    subplot(2,2,1);
-    plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
-    axis([-4 4 0 4e-3]);
-    xlabel('X (mm)','fontsize',12);
-    title('Bunch Spectra','fontsize',10);
-    legend('DATA','SIM');
-    
-    subplot(2,2,2);
-    plot(1:ESsteps,residual,'color','r','linewidth',2);
-    axis([0 ESsteps 0 7e-6]);
-    xlabel('Step','fontsize',12);
-    title('Residual','fontsize',10);
-    
-    subplot(2,2,3);
-    plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
-    axis([0 ESsteps 0.75 1.1]);
-    xlabel('Step','fontsize',12);
-    title('Particle Fraction','fontsize',10);
-    
-    subplot(2,2,4);
-    plot(1:ESsteps,cost,'color','b','linewidth',2);
-    axis([0 ESsteps 0 9]);
-    xlabel('Step','fontsize',12);
-    title('Cost','fontsize',10);
+%     figure(1);
+%     subplot(2,2,1);
+%     plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
+%     axis([-4 4 0 4e-3]);
+%     xlabel('X (mm)','fontsize',12);
+%     title('Bunch Spectra','fontsize',10);
+%     legend('DATA','SIM');
+%     
+%     subplot(2,2,2);
+%     plot(1:ESsteps,residual,'color','r','linewidth',2);
+%     axis([0 ESsteps 0 7e-6]);
+%     xlabel('Step','fontsize',12);
+%     title('Residual','fontsize',10);
+%     
+%     subplot(2,2,3);
+%     plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
+%     axis([0 ESsteps 0.75 1.1]);
+%     xlabel('Step','fontsize',12);
+%     title('Particle Fraction','fontsize',10);
+%     
+%     subplot(2,2,4);
+%     plot(1:ESsteps,cost,'color','b','linewidth',2);
+%     axis([0 ESsteps 0 9]);
+%     xlabel('Step','fontsize',12);
+%     title('Cost','fontsize',10);
     
     %saveas(gca,['/Users/sgess/Desktop/plots/MOVIES/ES/short/k1_' num2str(j,'%03d') '.png']);
     %figure(2);
