@@ -4,10 +4,12 @@ fontsize = 14;
 
 % Load sample spectra
 %load('data_samples.mat');
-load('data_sample_1103.mat');
-spec = mean(SPECTRA(:,:),2);
 %data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
-data_spectrum = spec/sum(spec);
+
+load('data_sample_1103.mat');
+%spec = mean(SPECTRA(:,:),2);
+%data_spectrum = spec/sum(spec);
+data_spectrum = SPECTRA(:,24)/sum(SPECTRA(:,24));
 spectrum_axis = spectrum_axis/1000;
 
 % load wakefield data
@@ -41,11 +43,11 @@ end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(17)n dt) to complete one full oscillation
-dt=(2*pi)/(20*w(18));
+dt=(2*pi)/(8*w(18));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 30000;
+ESsteps = 300;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -56,7 +58,7 @@ alpha = 2000*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = ones(1,18);
+gain = 2*ones(1,18);
 
 
 % Vector of 17 parameters that we will optimize
@@ -88,7 +90,8 @@ residual=zeros(1,ESsteps);
 
 tic
 
-
+figure(1);
+subplot(2,2,1);
 
 for j=1:ESsteps-1;
     j
@@ -106,16 +109,19 @@ for j=1:ESsteps-1;
     sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
-    residual(j) = sum((sim_spectrum - data_spectrum).^2);
+    %residual(j) = sum((sim_spectrum - data_spectrum).^2);
+    residual(j) = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
-    cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
+    %cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
+    cost(j) = 20 + log(residual(j)) + 0.001*Part_frac(j);
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
     for k = 1:18;
         pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
+        %pscaled(k,j+1)=pscaled(k,j)+dt*(alpha(k)*(w(k)^0.5)*cos(w(k)*j*dt)-gain(k)*(w(k)^0.5)*sin(w(k)*j*dt)*cost(j));
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
         else if pscaled(k,j+1) > 1;
@@ -145,10 +151,40 @@ for j=1:ESsteps-1;
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
     delta = params(18,j+1);                     % Energy offset
     
-    %figure(1);
-    %plot(1:ESsteps,cost,'b',1:ESsteps,residual*5000,'r',1:ESsteps,5*(1-Part_frac),'g');
-    %axis([0 ESsteps 0 1e-3]);
+    figure(1);
+    subplot(2,2,1);
+    plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
+    axis([-4 4 0 4e-3]);
+    xlabel('X (mm)','fontsize',12);
+    title('Bunch Spectra','fontsize',10);
+    legend('DATA','SIM');
+    
+    subplot(2,2,2);
+    plot(1:ESsteps,residual,'color','r','linewidth',2);
+    axis([0 ESsteps 0 7e-6]);
+    xlabel('Step','fontsize',12);
+    title('Residual','fontsize',10);
+    
+    subplot(2,2,3);
+    plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
+    axis([0 ESsteps 0.75 1.1]);
+    xlabel('Step','fontsize',12);
+    title('Particle Fraction','fontsize',10);
+    
+    subplot(2,2,4);
+    plot(1:ESsteps,cost,'color','b','linewidth',2);
+    axis([0 ESsteps 0 9]);
+    xlabel('Step','fontsize',12);
+    title('Cost','fontsize',10);
+    
+    %saveas(gca,['/Users/sgess/Desktop/plots/MOVIES/ES/short/k1_' num2str(j,'%03d') '.png']);
+    %figure(2);
+    %plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
     %axis([0 ESsteps 0 9]);
+    
+    
+    
+    
 end
 toc
 
