@@ -33,11 +33,11 @@ end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(18)n dt) to complete one full oscillation
-dt=(2*pi)/(20*max(w));
+dt=(2*pi)/(4*max(w));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 20000;
+ESsteps = 1000;
 
 % Number of times to run, re-set params, increase gain, and then run again
 bsteps = 1;

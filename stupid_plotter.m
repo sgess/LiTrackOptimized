@@ -23,14 +23,14 @@ end
 % Plot all scaled parameters together
 
 figure(4)
-plot(cost(1:j-1))
+plot(cost(2:j-1))
 %hold on
 %plot(avec(1:j-1),'r')
 
 % Plot Cost
 
 figure(5)
-plot(pscaled(:,1:j-1)')
+plot(pscaled(:,2:j-1)')
 
 
 % Average each parameter over one full 2Pi cycle, to get the equilibrium

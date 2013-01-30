@@ -33,7 +33,7 @@ end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(18)n dt) to complete one full oscillation
-dt=(2*pi)/(20*max(w));
+dt=(2*pi)/(4*max(w));
 
 
 % Total Number of Extremum Seeking Steps
@@ -274,7 +274,7 @@ end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(18)n dt) to complete one full oscillation
-dt=(2*pi)/(20*max(w));
+dt=(2*pi)/(4*max(w));
 
 
 % Total Number of Extremum Seeking Steps
@@ -284,7 +284,7 @@ ESsteps = 20000;
 bsteps = 1;
 
 % Scale for New Cost Part
-eps = 0*1e-4;
+eps = 1e-3;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -296,14 +296,15 @@ alpha = 20*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-%gain = 240000*ones(1,18);
-gain = 45*ones(1,18);
+gain = 240000*ones(1,18);
+
 
 % Vector of 18 parameters that we will optimize
 params=zeros(18,ESsteps);
 paramsorig=zeros(1,18);
 pscaled=zeros(18,ESsteps);
 cost=zeros(bsteps,ESsteps);
+
 
 % Average of each of the 18 parameters and the cost
 ave=zeros(18,ESsteps);
@@ -352,16 +353,14 @@ tic
 for jbest=1:bsteps;
     
     
-    %params(:,1)=bestparams(:,jbest);
-    %gain = gain*(jbest);
+    params(:,1)=bestparams(:,jbest);
+    gain = gain*(jbest);
 
 for j=1:ESsteps-1;
     jbest
     j
     
-    if j > 10000;
-        gain = 75*ones(1,18);
-    end
+    
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -378,16 +377,15 @@ for j=1:ESsteps-1;
     residual = sum((sim_spectrum - data_spectrum).^2);
     
     % Set Cost as the value of the residual
-    cost(jbest,j) = log10(residual) + eps*Part_frac(j);
+    cost(jbest,j) = residual + eps*Part_frac(j);
     
     
     
     
     
     pscaled(:,j)=(params(:,j)-Cent)./(Diff/2);
-    
-    % Start all of the parameters at zero
     pscaled(:,1)=zeros(18,1);
+    
     
     % Smooth out parameters
     %if j>40;
@@ -472,8 +470,7 @@ text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 % Save the results
-save('Jan_29_eps_zero_log')
-
+save('Jan_29_eps_NONzero')
 
 
 
