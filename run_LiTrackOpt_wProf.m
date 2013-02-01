@@ -2,29 +2,16 @@ clear all;
 
 fontsize = 14;
 
-% Load sample spectra
-%load('data_samples.mat');
-%data_spectrum = SPECTRA(:,66)/sum(SPECTRA(:,66));
-
-%load('data_sample_1103.mat');
-%spec = mean(SPECTRA(:,:),2);
-%data_spectrum = spec/sum(spec);
-%data_spectrum = SPECTRA(:,24)/sum(SPECTRA(:,24));
-%spectrum_axis = spectrum_axis/1000;
-
-load('data_samples_1108.mat');
-%spec = mean(SPECTRA(:,:),2);
-data_spectrum = spec/sum(spec);
-%data_spectrum = SPECTRA(:,5)/sum(SPECTRA(:,5));
-%data_spectrum = SPECTRA(:,14)/sum(SPECTRA(:,14));
-spectrum_axis = spectrum_axis/1000;
-
-%load('data_samples_1443.mat');
-%spec = mean(SPECTRA(:,:),2);
-%data_spectrum = spec/sum(spec);
-%data_spectrum = SPECTRA(:,1)/sum(SPECTRA(:,1));
-%spectrum_axis = spectrum_axis/1000;
-
+% Load sample profile
+x = randn(1,100000);
+y = randn(1,50000);
+d = [25*x-100, 25*y+250];
+[n,ax]=hist(d,128);
+%n = [0*(1:192) n 0*(1:192)];
+dax = ax(2)-ax(1);
+%ax = [ax(1)-dax*(1:192) ax ax(128)+dax*(1:192)];
+samp_ax = ax'/1000;
+prof = n'/sum(n);
 
 % load wakefield data
 global A;
@@ -36,15 +23,19 @@ global PARAM;
 % Parameter limit file
 %par_limits;
 %new_par_lims;
-newer_par_lims;
+%newer_par_lims;
+notch_par_lims;
 
 % Set Parameter guess values
-sim_params;
+%sim_params;
+notch_params;
+
+n_par = 18;
 
 w0=1000;
 w00=5000;
 
-w=zeros(1,18);
+w=zeros(1,n_par);
 
 pr = primes(w0);
 lpr = length(pr);
@@ -52,13 +43,13 @@ lpr = length(pr);
 % The w(i) values are w(i) = sqrt(pi), where p1,...,p17 are the 17 primes less than w0. 
 % This is a easy quick way to get pretty good "independence" between the
 % varius frequencies.
-for j2=18:-1:1;
+for j2=n_par:-1:1;
     w(j2)=w00*(pr(lpr-5*j2).^0.5);
 end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(17)n dt) to complete one full oscillation
-dt=(2*pi)/(8*w(18));
+dt=(2*pi)/(8*w(n_par));
 
 
 % Total Number of Extremum Seeking Steps
@@ -69,17 +60,17 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 2000*ones(1,18);
+alpha = 2000*ones(1,n_par);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 2*ones(1,18);
+gain = 2*ones(1,n_par);
 
 
 % Vector of 17 parameters that we will optimize
 
-params=zeros(18,ESsteps);
-pscaled=zeros(18,ESsteps);
+params=zeros(n_par,ESsteps);
+pscaled=zeros(n_par,ESsteps);
 cost=zeros(1,ESsteps);
 Part_frac=zeros(1,ESsteps);
 residual=zeros(1,ESsteps);
@@ -88,8 +79,7 @@ residual=zeros(1,ESsteps);
     params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
     params(3,1) = PARAM.INIT.NPART;     % Number of Particles
     params(4,1) = PARAM.INIT.ASYM;      % Initial Gaussian Asymmetry
-    %params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
-    params(5,1) = 0.039;
+    params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
     params(6,1) = PARAM.NRTL.PHAS;      % RF Compressor Phase
     params(7,1) = PARAM.NRTL.ELO;       % Low Energy Cutoff
     params(8,1) = PARAM.NRTL.EHI;       % High Energy Cutoff
@@ -99,11 +89,10 @@ residual=zeros(1,ESsteps);
     params(12,1) = PARAM.LI10.EHI;      % High Energy Cutoff
     params(13,1) = PARAM.LI20.ELO;      % Low Energy Cutoff
     params(14,1) = PARAM.LI20.EHI;      % High Energy Cutoff
-    params(15,1) = PARAM.LI20.BETA;     % Beta Function
-    params(16,1) = PARAM.LI20.R16;      % Dispersion
-    params(17,1) = PARAM.LI20.T166;     % 2nd Order Dispersion
-    params(18,1) = delta;               % Energy offset
-
+    params(15,1) = PARAM.LI20.R56;
+    params(16,1) = PARAM.LI20.NLO;
+    params(17,1) = PARAM.LI20.NHI;
+    params(18,1) = dZ;
 tic
 
 figure(1);
@@ -114,7 +103,7 @@ for j=1:ESsteps-1;
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
-
+    PARAM.LI20.T566  = p(1)*PARAM.LI20.R56^2 + p(2)*PARAM.LI20.R56 + p(3);
     
     % Run LiTrack
     OUT = LiTrackOpt('FACETpar');
@@ -122,27 +111,30 @@ for j=1:ESsteps-1;
     
     
     % Interpolate simulated spectrum
-    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
+    %sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
+    sim_profile = interpSimProf(OUT,samp_ax,PARAM.SIMU.BIN,dZ);
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
-    residual(j) = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
+    residual(j) = sum(prof.*(sim_profile - prof).^2);
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
     %cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
-    cost(j) = 20 + log(residual(j)) + 0.001*Part_frac(j);
+    %cost(j) = 20 + log(residual(j)) + 0.001*Part_frac(j);
+    cost(j) = 20 + log(residual(j));
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
-    for k = 1:18;
+    for k = 1:n_par;
         pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
-        %pscaled(k,j+1)=pscaled(k,j)+dt*(alpha(k)*(w(k)^0.5)*cos(w(k)*j*dt)-gain(k)*(w(k)^0.5)*sin(w(k)*j*dt)*cost(j));
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
-        else if pscaled(k,j+1) > 1;
-                pscaled(k,j+1) = 1;
-            end
+        elseif pscaled(k,j+1) > 1;
+            pscaled(k,j+1) = 1;
+        end
+        if pscaled(16,j+1) > pscaled(17,j+1)
+            pscaled(16,j+1) = pscaled(17,j+1) - 0.0000001;
         end
     end
     
@@ -162,41 +154,41 @@ for j=1:ESsteps-1;
     PARAM.LI10.EHI = params(12,j+1);            % High Energy Cutoff
     PARAM.LI20.ELO = params(13,j+1);            % Low Energy Cutoff
     PARAM.LI20.EHI = params(14,j+1);            % High Energy Cutoff
-    PARAM.LI20.BETA = params(15,j+1);           % Beta Function
-    PARAM.LI20.R16 = params(16,j+1);            % Dispersion
-    PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
-    delta = params(18,j+1);                     % Energy offset
+    PARAM.LI20.R56 = params(15,j+1);
+    PARAM.LI20.NLO = params(16,j+1);
+    PARAM.LI20.NHI = params(17,j+1);
+    dZ = params(18,j+1);
     
-%     figure(1);
-%     subplot(2,2,1);
-%     plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
-%     axis([-4 4 0 4e-3]);
-%     xlabel('X (mm)','fontsize',12);
-%     title('Bunch Spectra','fontsize',10);
-%     legend('DATA','SIM');
-%     
-%     subplot(2,2,2);
-%     plot(1:ESsteps,residual,'color','r','linewidth',2);
-%     axis([0 ESsteps 0 7e-6]);
-%     xlabel('Step','fontsize',12);
-%     title('Residual','fontsize',10);
-%     
-%     subplot(2,2,3);
-%     plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
-%     axis([0 ESsteps 0.75 1.1]);
-%     xlabel('Step','fontsize',12);
-%     title('Particle Fraction','fontsize',10);
-%     
-%     subplot(2,2,4);
-%     plot(1:ESsteps,cost,'color','b','linewidth',2);
-%     axis([0 ESsteps 0 9]);
-%     xlabel('Step','fontsize',12);
-%     title('Cost','fontsize',10);
+    figure(1);
+    subplot(2,2,1);
+    plot(samp_ax,prof,'g',samp_ax,sim_profile,'b','linewidth',2);
+    %axis([-4 4 0 4e-3]);
+    xlabel('X (mm)','fontsize',12);
+    title('Bunch Spectra','fontsize',10);
+    legend('DATA','SIM');
+    
+    subplot(2,2,2);
+    plot(1:ESsteps,residual,'color','r','linewidth',2);
+    %axis([0 ESsteps 0 7e-6]);
+    xlabel('Step','fontsize',12);
+    title('Residual','fontsize',10);
+    
+    subplot(2,2,3);
+    plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
+    %axis([0 ESsteps 0.75 1.1]);
+    xlabel('Step','fontsize',12);
+    title('Particle Fraction','fontsize',10);
+    
+    subplot(2,2,4);
+    plot(1:ESsteps,cost,'color','b','linewidth',2);
+    %axis([0 ESsteps 0 9]);
+    xlabel('Step','fontsize',12);
+    title('Cost','fontsize',10);
     
     %saveas(gca,['/Users/sgess/Desktop/plots/MOVIES/ES/short/k1_' num2str(j,'%03d') '.png']);
-    figure(1);
-    plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
-    axis([0 ESsteps 0 9]);
+%     figure(1);
+%     plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
+%     axis([0 ESsteps 0 9]);
     
     
     

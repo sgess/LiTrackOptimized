@@ -50,7 +50,7 @@ pft = 1 - OUT.I.PART(2)/PARAM.INIT.NESIM;
 sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
 
 % Calculate residual
-rft = sum((sim_spectrum - data_spectrum).^2);
+rft = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
 
 % Set Cost as the value of the residual
 %cost(j) = residual;
@@ -64,3 +64,12 @@ text(-3.5,5e-3,['Residual = ' num2str(rft,'%0.2e')],'fontsize',14);
 
 figure(3)
 plot(OUT.Z.AXIS(:,2),OUT.Z.HIST(:,2));
+
+figure(4)
+plot(cost(1:j));
+
+figure(5)
+plot(residual(1:j));
+
+figure(6)
+plot(Part_frac(1:j));
