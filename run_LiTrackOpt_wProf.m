@@ -7,10 +7,12 @@ x = randn(1,100000);
 y = randn(1,50000);
 d = [25*x-100, 25*y+250];
 [n,ax]=hist(d,128);
-%n = [0*(1:192) n 0*(1:192)];
-dax = ax(2)-ax(1);
-%ax = [ax(1)-dax*(1:192) ax ax(128)+dax*(1:192)];
-samp_ax = ax'/1000;
+ax_min = ax(1);
+dax = (ax(2) - ax(1))/1000;
+pMin = -0.5;
+pMax = 1.0;
+
+samp_ax = (ax-ax_min)'/1000;
 prof = n'/sum(n);
 
 % load wakefield data
@@ -111,8 +113,7 @@ for j=1:ESsteps-1;
     
     
     % Interpolate simulated spectrum
-    %sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
-    sim_profile = interpSimProf(OUT,samp_ax,PARAM.SIMU.BIN,dZ);
+    sim_profile = interpSimProf(OUT,PARAM.SIMU.BIN,2,dax,pMin,pMax,dZ);
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
