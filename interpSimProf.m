@@ -28,7 +28,7 @@ if max_bin > Bins
     PROF_SPEC(min_bin:Bins) = SZ(1:top_bin)/sim_sum;
 elseif off_bin == 1
     warning('dZ = %0.4f is too low and moves profile out of range.',dZ);
-    bot_bin = round((PROF_AXIS(1) - dZ)/dAX);
+    bot_bin = round((PROF_AXIS(1) - dZ)/dAX) + 1;
     max_bin = N - bot_bin + 1;
     PROF_SPEC(1:max_bin) = SZ(bot_bin:N)/sim_sum;
 else

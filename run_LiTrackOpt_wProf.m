@@ -42,8 +42,11 @@ notch_params;
 
 n_par = 18;
 
-w0=1000;
-w00=5000;
+%w0=1000;
+%w00=5000;
+
+w0 = 1500;
+w00 = 50000;
 
 w=zeros(1,n_par);
 
@@ -59,23 +62,24 @@ end
 
 % ES Time Step Size, choose dt small enough so that it takes 20 steps for
 % the highest frequency cos(w(17)n dt) to complete one full oscillation
-dt=(2*pi)/(8*w(n_par));
-
+%dt=(2*pi)/(8*w(n_par));
+dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 3000;
+ESsteps = 1500;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 2000*ones(1,n_par);
+%alpha = 2000*ones(1,n_par);
+alpha = 80;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 4*ones(1,n_par);
-
+%gain = 4*ones(1,n_par);
+gain = 10000000;
 
 % Vector of 17 parameters that we will optimize
 
@@ -128,15 +132,16 @@ for j=1:ESsteps-1;
     residual(j) = sum(PROF.*(SIM - PROF).^2);
     
     % Set Cost as the value of the residual
-    %cost(j) = residual;
+    cost(j) = residual(j);
     %cost(j) = 14 + log(residual(j)) + 0.001*Part_frac(j);
     %cost(j) = 20 + log(residual(j)) + 0.001*Part_frac(j);
-    cost(j) = 20 + log(residual(j));
+    %cost(j) = 20 + log(residual(j));
     
     pscaled(:,j)=2*(params(:,j)-Cent)./Diff;
     
     for k = 1:n_par;
-        pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
+        %pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(j))*(alpha(k)*w(k))^0.5;
+        pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain*cost(j))*(alpha*w(k))^0.5;
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
         elseif pscaled(k,j+1) > 1;
