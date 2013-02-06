@@ -66,7 +66,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 1500;
+ESsteps = 30000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -106,7 +106,7 @@ params(14,1) = PARAM.LI20.EHI;      % High Energy Cutoff
 params(15,1) = PARAM.LI20.R56;
 params(16,1) = PARAM.LI20.NLO;
 params(17,1) = PARAM.LI20.NHI;
-params(18,1) = -0.25;
+params(18,1) = 0;
 
 
 figure(1);
