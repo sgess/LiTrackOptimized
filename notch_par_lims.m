@@ -35,7 +35,7 @@ Low_limit = [5e-3;
              0.00;
              -0.02;
              -0.02;
-             -0.2;];
+             -0.5;];
          
 % Higher limit on params                 
 High_limit= [10e-3;
@@ -55,7 +55,7 @@ High_limit= [10e-3;
              0.01;
              +0.02;
              +0.02;
-             +0.2;];
+             +0.5;];
          
 Cent=(High_limit+Low_limit)/2;
 Diff=High_limit-Low_limit;

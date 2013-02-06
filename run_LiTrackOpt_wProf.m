@@ -6,14 +6,22 @@ fontsize = 14;
 x = randn(1,100000);
 y = randn(1,50000);
 d = [25*x-100, 25*y+250];
-[n,ax]=hist(d,128);
-ax_min = ax(1);
-dax = (ax(2) - ax(1))/1000;
-pMin = -0.5;
-pMax = 1.0;
+nBins =  128;
+[n,ax]=hist(d,nBins);
 
-samp_ax = (ax-ax_min)'/1000;
-prof = n'/sum(n);
+% Create axis for comparing profiles
+dax = (ax(2) - ax(1))/1000; % bin spacing
+pMin = -0.5;                % low Z val
+pMax = 1.0;                 % high Z val
+N_lo = floor(pMin/dax);     % low bin
+N_hi = ceil(pMax/dax);      % high bin
+AXIS = dax*(N_lo:N_hi);     % comparison axis
+Bins = length(AXIS);        % number of bins
+[~,z_bin] = min(abs(AXIS)); % zero bin
+
+% Embed profile in on profile axis always starting at zero
+PROF = zeros(1,Bins);
+PROF(z_bin:(z_bin+nBins-1)) = n/sum(n);
 
 % load wakefield data
 global A;
@@ -66,7 +74,7 @@ alpha = 2000*ones(1,n_par);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 2*ones(1,n_par);
+gain = 4*ones(1,n_par);
 
 
 % Vector of 17 parameters that we will optimize
@@ -77,29 +85,29 @@ cost=zeros(1,ESsteps);
 Part_frac=zeros(1,ESsteps);
 residual=zeros(1,ESsteps);
 
-    params(1,1) = PARAM.INIT.SIGZ0;     % Bunch Length
-    params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
-    params(3,1) = PARAM.INIT.NPART;     % Number of Particles
-    params(4,1) = PARAM.INIT.ASYM;      % Initial Gaussian Asymmetry
-    params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
-    params(6,1) = PARAM.NRTL.PHAS;      % RF Compressor Phase
-    params(7,1) = PARAM.NRTL.ELO;       % Low Energy Cutoff
-    params(8,1) = PARAM.NRTL.EHI;       % High Energy Cutoff
-    params(9,1) = decker;               % 2-10 Phase
-    params(10,1) = ramp;                % Ramp Phase
-    params(11,1) = PARAM.LI10.ELO;      % Low Energy Cutoff
-    params(12,1) = PARAM.LI10.EHI;      % High Energy Cutoff
-    params(13,1) = PARAM.LI20.ELO;      % Low Energy Cutoff
-    params(14,1) = PARAM.LI20.EHI;      % High Energy Cutoff
-    params(15,1) = PARAM.LI20.R56;
-    params(16,1) = PARAM.LI20.NLO;
-    params(17,1) = PARAM.LI20.NHI;
-    params(18,1) = dZ;
-tic
+params(1,1) = PARAM.INIT.SIGZ0;     % Bunch Length
+params(2,1) = PARAM.INIT.SIGD0;     % Initial Energy Spread
+params(3,1) = PARAM.INIT.NPART;     % Number of Particles
+params(4,1) = PARAM.INIT.ASYM;      % Initial Gaussian Asymmetry
+params(5,1) = PARAM.NRTL.AMPL;      % Amplitude of RF Compressor
+params(6,1) = PARAM.NRTL.PHAS;      % RF Compressor Phase
+params(7,1) = PARAM.NRTL.ELO;       % Low Energy Cutoff
+params(8,1) = PARAM.NRTL.EHI;       % High Energy Cutoff
+params(9,1) = decker;               % 2-10 Phase
+params(10,1) = ramp;                % Ramp Phase
+params(11,1) = PARAM.LI10.ELO;      % Low Energy Cutoff
+params(12,1) = PARAM.LI10.EHI;      % High Energy Cutoff
+params(13,1) = PARAM.LI20.ELO;      % Low Energy Cutoff
+params(14,1) = PARAM.LI20.EHI;      % High Energy Cutoff
+params(15,1) = PARAM.LI20.R56;
+params(16,1) = PARAM.LI20.NLO;
+params(17,1) = PARAM.LI20.NHI;
+params(18,1) = -0.25;
+
 
 figure(1);
-%subplot(2,2,1);
 
+tic
 for j=1:ESsteps-1;
     j
     
@@ -113,11 +121,11 @@ for j=1:ESsteps-1;
     
     
     % Interpolate simulated spectrum
-    sim_profile = interpSimProf(OUT,PARAM.SIMU.BIN,2,dax,pMin,pMax,dZ);
+    SIM = interpSimProf(OUT,PARAM.SIMU.BIN,2,AXIS,dZ);
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
-    residual(j) = sum(prof.*(sim_profile - prof).^2);
+    residual(j) = sum(PROF.*(SIM - PROF).^2);
     
     % Set Cost as the value of the residual
     %cost(j) = residual;
@@ -162,7 +170,7 @@ for j=1:ESsteps-1;
     
     figure(1);
     subplot(2,2,1);
-    plot(samp_ax,prof,'g',samp_ax,sim_profile,'b','linewidth',2);
+    plot(AXIS,PROF,'g',AXIS,SIM,'b','linewidth',2);
     %axis([-4 4 0 4e-3]);
     xlabel('X (mm)','fontsize',12);
     title('Bunch Spectra','fontsize',10);
@@ -186,21 +194,13 @@ for j=1:ESsteps-1;
     xlabel('Step','fontsize',12);
     title('Cost','fontsize',10);
     
-    %saveas(gca,['/Users/sgess/Desktop/plots/MOVIES/ES/short/k1_' num2str(j,'%03d') '.png']);
-%     figure(1);
-%     plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
-%     axis([0 ESsteps 0 9]);
-    
-    
-    
-    
 end
 toc
 
 
 % Plot Output
-figure(1)
-plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
+figure(2)
+plot(AXIS,PROF,'g',AXIS,SIM,'b');
 legend('DATA','ES-SIMULATION');
 xlabel('X (mm)','fontsize',14);
 text(-3.5,5e-3,['Residual = ' num2str(residual(j-1),'%0.2e')],'fontsize',14);

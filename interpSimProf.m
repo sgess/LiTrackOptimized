@@ -1,10 +1,8 @@
-function [PROF_SPEC, PROF_AXIS] = interpSimProf(OUT,nBin,iEL,dAX,pMin,pMax,dZ)
+function PROF_SPEC = interpSimProf(OUT,nBin,iEL,PROF_AXIS,dZ)
 
-% Create Profile axis
-N_lo = floor(pMin/dAX);
-N_hi = ceil(pMax/dAX);
-PROF_AXIS = dAX*(N_lo:N_hi);
+%Extract axis info
 Bins = length(PROF_AXIS);
+dAX = PROF_AXIS(2) - PROF_AXIS(1);
 
 % Identify Max and Min of Simulated energy distribution
 z_max = OUT.Z.AXIS(nBin,iEL);
@@ -19,18 +17,18 @@ SZ = interp1(OUT.Z.HIST(:,iEL),zz);
 sim_sum = sum(SZ);
 
 % Embed profile spectrum
-offset = round(dZ/dAX);
-max_bin = N + offset;
-min_bin = offset;
-PROF_SPEC = zeros(1:Bins);
-if max_bin > N_hi
-    warning('dZ = %0.4f is to high and moves profile out of range.',dZ);
-    top_bin = max_bin - N_hi + 1;
-    min_bin = max_bin - N;
-    PROF_SPEC(min_bin:) = SZ(1:top_bin)/sim_sum;
-elseif min_bin < N_lo
-    warning('dZ = %0.4f is to low and moves profile out of range.',dZ);
-    bot_bin = 1 - min_bin;
+[~,off_bin] = min(abs(PROF_AXIS - dZ));
+max_bin = N + off_bin - 1;
+min_bin = off_bin;
+PROF_SPEC = zeros(1,Bins);
+if max_bin > Bins
+    warning('dZ = %0.4f is too high and moves profile out of range.',dZ);
+    top_bin = Bins - off_bin + 1;
+    min_bin = off_bin;
+    PROF_SPEC(min_bin:Bins) = SZ(1:top_bin)/sim_sum;
+elseif off_bin == 1
+    warning('dZ = %0.4f is too low and moves profile out of range.',dZ);
+    bot_bin = round((PROF_AXIS(1) - dZ)/dAX);
     max_bin = N - bot_bin + 1;
     PROF_SPEC(1:max_bin) = SZ(bot_bin:N)/sim_sum;
 else
