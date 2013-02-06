@@ -36,7 +36,7 @@ plot(pscaled(:,2:j-1)')
 % Average each parameter over one full 2Pi cycle, to get the equilibrium
 % parameter about which it has settled.
 
-[y,mj] = min(cost(jbest,2:j-1));
+[y,mj] = min(cost(2:j-1));
 
 aveparams=zeros(1,18);
 aveparams=params(:,mj);
@@ -122,6 +122,52 @@ xlabel('X (mm)','fontsize',14);
 text(-3.5,5.5e-3,['Original Residual = ' num2str(residual_original,'%0.2e')],'fontsize',14);
 text(-3.5,5e-3,['Residual after ES = ' num2str(residual,'%0.2e')],'fontsize',14);
 
+
+% Compare to the final conditions
+
+    j = ESsteps;
+
+    PARAM.INIT.SIGZ0 = params(1,j-1);           % Bunch Length
+    PARAM.INIT.SIGD0 = params(2,j-1);           % Initial Energy Spread
+    PARAM.INIT.NPART = params(3,j-1);           % Number of Particles
+    PARAM.INIT.ASYM = params(4,j-1);            % Initial Gaussian Asymmetry
+    PARAM.NRTL.AMPL = params(5,j-1);            % Amplitude of RF Compressor
+    PARAM.NRTL.PHAS = params(6,j-1);            % RF Compressor Phase
+    PARAM.NRTL.ELO = params(7,j-1);             % Low Energy Cutoff
+    PARAM.NRTL.EHI = params(8,j-1);             % High Energy Cutoff
+    decker = params(9,j-1);                     % 2-10 Phase
+    ramp = params(10,j-1);                      % Ramp Phase
+    PARAM.LI10.ELO = params(11,j-1);            % Low Energy Cutoff
+    PARAM.LI10.EHI = params(12,j-1);            % High Energy Cutoff
+    PARAM.LI20.ELO = params(13,j-1);            % Low Energy Cutoff
+    PARAM.LI20.EHI = params(14,j-1);            % High Energy Cutoff
+    PARAM.LI20.BETA = params(15,j-1);           % Beta Function
+    PARAM.LI20.R16 = params(16,j-1);            % Dispersion
+    PARAM.LI20.T166 = params(17,j-1);           % 2nd Order Dispersion
+    delta = params(18,j-1);                     % Energy offset
+
+    PARAM.LONE.PHAS = decker+ramp;  % Total Phase
+    PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+
+    
+    % Run LiTrack
+    OUT = LiTrackOpt('FACETpar');
+    
+    % Interpolate simulated spectrum
+    sim_spectrum_final = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
+    
+    % Calculate residual
+    residual_final = sum((sim_spectrum_original - data_spectrum).^2);
+    
+   
+    
+% Plot Output
+figure(7)
+plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum_original,'r',spectrum_axis,sim_spectrum_final,'b');
+legend('DATA','INITIAL CONDITIONS','ES-FINAL SIMULATION');
+xlabel('X (mm)','fontsize',14);
+text(-3.5,5.5e-3,['Original Residual = ' num2str(residual_original,'%0.2e')],'fontsize',14);
+text(-3.5,5e-3,['Residual after ES = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 

@@ -37,7 +37,7 @@ dt=(2*pi)/(4*max(w));
 
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 20000;
+ESsteps = 70000;
 
 % Number of times to run, re-set params, increase gain, and then run again
 bsteps = 1;
@@ -50,19 +50,19 @@ EST = ESsteps*dt;
 
 % alpha is, in a way, the size of the perturbation, maybe want different values
 % for different parameters, depending how sensitive they are
-alpha = 20*ones(1,18);
+alpha = 80;
 %alpha(2)=100;
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 240000*ones(1,18);
+gain = 10000000;
 
 
 % Vector of 18 parameters that we will optimize
 params=zeros(18,ESsteps);
 paramsorig=zeros(1,18);
 pscaled=zeros(18,ESsteps);
-cost=zeros(bsteps,ESsteps);
+cost=zeros(1,ESsteps);
 
 
 % Average of each of the 18 parameters and the cost
@@ -109,14 +109,9 @@ global A;
 A = load('slac.dat');
 
 tic
-for jbest=1:bsteps;
-    
-    
-    params(:,1)=bestparams(:,jbest);
-    gain = gain*(jbest);
+
 
 for j=1:ESsteps-1;
-    jbest
     j
     
     
@@ -133,10 +128,13 @@ for j=1:ESsteps-1;
     sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
-    residual = sum((sim_spectrum - data_spectrum).^2);
+    %residual = sum((sim_spectrum - data_spectrum).^2);
+    
+    %Spencer's New Method
+    residual = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
     
     % Set Cost as the value of the residual
-    cost(jbest,j) = residual + eps*Part_frac(j);
+    cost(j) = residual + eps*Part_frac(j);
     
     
     
@@ -167,8 +165,8 @@ for j=1:ESsteps-1;
     %gain = gain + 2000*(1-exp(-j/8000));
     
     for k = 1:18;
-        %pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain(k)*cost(jbest,j))*(alpha(k)*w(k))^0.5;
-        pscaled(k,j+1)=pscaled(k,j)+dt*(alpha(k)*(w(k)^0.5)*cos(w(k)*j*dt)-gain(k)*(w(k)^0.5)*sin(w(k)*j*dt)*cost(jbest,j));
+        pscaled(k,j+1)=pscaled(k,j)+dt*cos(w(k)*j*dt+gain*cost(j))*(alpha*w(k))^0.5;
+        %pscaled(k,j+1)=pscaled(k,j)+dt*(alpha(k)*(w(k)^0.5)*cos(w(k)*j*dt)-gain(k)*(w(k)^0.5)*sin(w(k)*j*dt)*cost(jbest,j));
         if pscaled(k,j+1) < -1;
             pscaled(k,j+1) = -1;
         else if pscaled(k,j+1) > 1;
@@ -201,20 +199,7 @@ for j=1:ESsteps-1;
        
 end
 
-figure(jbest)
-for jp1=1:2;
-    for jp2=1:9;
-        subplot(9,2,jp2+(jp1-1)*9);
-            plot(pscaled(jp2+(jp1-1)*9,1:j-1))
-    end
-end
 
-
-% Save best parameters to use as new starting point
-[y,mj] = min(cost(jbest,1:j-1));
-bestparams(:,jbest+1)=params(:,mj);
-
-end
 toc
 
 % Plot Output
@@ -229,7 +214,8 @@ text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 % Save the results
-save('Jan_29_eps_zero')
+save('Feb_5_2nd_eps_zero')
+
 
 %%
 
@@ -284,7 +270,7 @@ ESsteps = 20000;
 bsteps = 1;
 
 % Scale for New Cost Part
-eps = 1e-3;
+eps = 1e-4;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -296,7 +282,7 @@ alpha = 20*ones(1,18);
 
 % gain is the gain of each parameter's ES loop, maybe want different values
 % for different parameters, depending how sensitive they are
-gain = 240000*ones(1,18);
+gain=24000000*ones(1,18);
 
 
 % Vector of 18 parameters that we will optimize
@@ -374,7 +360,11 @@ for j=1:ESsteps-1;
     sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
-    residual = sum((sim_spectrum - data_spectrum).^2);
+    %residual = sum((sim_spectrum - data_spectrum).^2);
+    
+    %Spencer's New Method
+    residual = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
+    
     
     % Set Cost as the value of the residual
     cost(jbest,j) = residual + eps*Part_frac(j);
@@ -470,7 +460,7 @@ text(-3.5,5e-3,['Residual = ' num2str(residual,'%0.2e')],'fontsize',14);
 
 
 % Save the results
-save('Jan_29_eps_NONzero')
+save('Jan_30_eps_NONzero')
 
 
 
