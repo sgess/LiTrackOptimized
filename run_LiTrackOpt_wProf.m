@@ -66,7 +66,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 500;
+ESsteps = 30000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -121,7 +121,7 @@ for j=1:ESsteps-1;
     
     % Run LiTrack
     %OUT = LiTrackOpt('FACETpar');
-    OUT = LiTrackOpt('FACETconNotch');
+    OUT = LiTrackOpt('FACETconNOTCH');
     Part_frac(j) = 1 - OUT.I.PART(2)/PARAM.INIT.NESIM;
     
     
