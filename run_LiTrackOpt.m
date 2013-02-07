@@ -122,7 +122,8 @@ for j=1:ESsteps-1;
     
     
     % Interpolate simulated spectrum
-    sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
+    %sim_spectrum = interpSim(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
+    sim_spectrum = interpSimSpec(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
@@ -167,36 +168,36 @@ for j=1:ESsteps-1;
     PARAM.LI20.T166 = params(17,j+1);           % 2nd Order Dispersion
     delta = params(18,j+1);                     % Energy offset
     
-%     figure(1);
-%     subplot(2,2,1);
-%     plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
-%     axis([-4 4 0 4e-3]);
-%     xlabel('X (mm)','fontsize',12);
-%     title('Bunch Spectra','fontsize',10);
-%     legend('DATA','SIM');
-%     
-%     subplot(2,2,2);
-%     plot(1:ESsteps,residual,'color','r','linewidth',2);
-%     axis([0 ESsteps 0 7e-6]);
-%     xlabel('Step','fontsize',12);
-%     title('Residual','fontsize',10);
-%     
-%     subplot(2,2,3);
-%     plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
-%     axis([0 ESsteps 0.75 1.1]);
-%     xlabel('Step','fontsize',12);
-%     title('Particle Fraction','fontsize',10);
-%     
-%     subplot(2,2,4);
-%     plot(1:ESsteps,cost,'color','b','linewidth',2);
-%     axis([0 ESsteps 0 9]);
-%     xlabel('Step','fontsize',12);
-%     title('Cost','fontsize',10);
+    figure(1);
+    subplot(2,2,1);
+    plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
+    axis([-4 4 0 6e-3]);
+    xlabel('X (mm)','fontsize',12);
+    title('Bunch Spectra','fontsize',10);
+    legend('DATA','SIM');
+    
+    subplot(2,2,2);
+    plot(1:ESsteps,residual,'color','r','linewidth',2);
+    axis([0 ESsteps 0 7e-6]);
+    xlabel('Step','fontsize',12);
+    title('Residual','fontsize',10);
+    
+    subplot(2,2,3);
+    plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
+    axis([0 ESsteps 0.75 1.1]);
+    xlabel('Step','fontsize',12);
+    title('Particle Fraction','fontsize',10);
+    
+    subplot(2,2,4);
+    plot(1:ESsteps,cost,'color','b','linewidth',2);
+    axis([0 ESsteps 0 9]);
+    xlabel('Step','fontsize',12);
+    title('Cost','fontsize',10);
     
     %saveas(gca,['/Users/sgess/Desktop/plots/MOVIES/ES/short/k1_' num2str(j,'%03d') '.png']);
-    figure(1);
-    plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
-    axis([0 ESsteps 0 9]);
+    %figure(1);
+    %plot(1:ESsteps,cost,'b',1:ESsteps,residual*1e6,'r',1:ESsteps,(1-Part_frac),'g');
+    %axis([0 ESsteps 0 9]);
     
     
     
@@ -206,7 +207,7 @@ toc
 
 
 % Plot Output
-figure(1)
+figure(2)
 plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b');
 legend('DATA','ES-SIMULATION');
 xlabel('X (mm)','fontsize',14);

@@ -23,12 +23,13 @@ offset = round(delta*eta/bin);
 max_bin = offset + PIX/2 - sim_cen + N - 1;
 min_bin = offset + PIX/2 - sim_cen;
 if max_bin > PIX
-    warning('Delta = %0.4f is to high and moves spectrum out of range.',delta);
-    max_bin = PIX;
-    min_bin = PIX - N + 1;
+    warning('Delta = %0.4f is too high and moves spectrum out of range.',delta);
+    top_bin = PIX/2 + sim_cen - offset + 1;
+    SIM_SPEC(min_bin:PIX) = SX(1:top_bin)/sim_sum;
 elseif min_bin < 1
-    warning('Delta = %0.4f is to low and moves spectrum out of range.',delta);
-    min_bin = 1;
-    max_bin = N;
+    warning('Delta = %0.4f is too low and moves spectrum out of range.',delta);
+    bot_bin = 2 - min_bin;
+    SIM_SPEC(1:max_bin) = SX(bot_bin:N)/sim_sum;
+else 
+    SIM_SPEC(min_bin:max_bin) = SX/sim_sum;
 end
-SIM_SPEC(min_bin:max_bin) = SX/sim_sum;
