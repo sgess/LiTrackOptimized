@@ -25,11 +25,11 @@ PARAM.INIT.CUT   = 6;       % Not sure what this is
 % NRTL bunch compressor
 PARAM.NRTL.AMPL  = 0.0408;   % RTL compressor ampl (MV)
 PARAM.NRTL.PHAS  = 90.00;   % RTL compressor phase (deg)
-PARAM.NRTL.LEFF  = 2.1694;  % RTL cavity length (m)
-PARAM.NRTL.R56   = 0.602601;% RTL chicane R56 (m)
-PARAM.NRTL.T566  = 1.07572; % RTL chicane T566 (m)
-PARAM.NRTL.ELO   = -0.0300; % RTL lower momentum cut (GeV)
-PARAM.NRTL.EHI   = 0.0300;  % RTL upper momentum cut (GeV)
+PARAM.NRTL.LEFF  = 2.13;  % RTL cavity length (m)
+PARAM.NRTL.R56   = 0.603;% RTL chicane R56 (m)
+PARAM.NRTL.T566  = 1.0535; % RTL chicane T566 (m)
+PARAM.NRTL.ELO   = -0.025; % RTL lower momentum cut (GeV)
+PARAM.NRTL.EHI   = 0.025;  % RTL upper momentum cut (GeV)
 
 % LI02-LI10 acceleration
 PARAM.LONE.LEFF  = 809.5;   % Length of LI02-LI10 (m)
@@ -41,7 +41,7 @@ PARAM.LONE.FBAM  = 0.235;   % feedback amplitude at S10 (GV)
 PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
 
 % LI10 bunch compressor
-PARAM.LI10.R56   = -0.075786;% Sector 10 chicane R56 (m)
+PARAM.LI10.R56   = -0.076;% Sector 10 chicane R56 (m)
 PARAM.LI10.ISR   = 5.9E-5;   % ISR energy spread from bends
 PARAM.LI10.ELO   = -0.040;   % low energy cut
 PARAM.LI10.EHI   = 0.040;    % high energy cut
@@ -55,7 +55,7 @@ PARAM.LTWO.FBAM  = 1.88;    % feedback amplitude at S20 (GV)
 
 % LI20 bunch compressor
 PARAM.LI20.NLO   = 0.005;       % notch low
-PARAM.LI20.NHI   = 0.017;       % notch hi
+PARAM.LI20.NHI   = 0.010;       % notch hi
 
 r_struct;
 PARAM.LI20.R56   = 0.0100;  % Sector 20 chicane R56 (m)

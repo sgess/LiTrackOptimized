@@ -5,14 +5,14 @@ fontsize = 14;
 % Load sample profile
 x = randn(1,100000);
 y = randn(1,50000);
-d = [25*x-100, 25*y+250];
+d = [25*x, 25*y+150];
 nBins =  128;
 [n,ax]=hist(d,nBins);
 
 % Create axis for comparing profiles
 dax = (ax(2) - ax(1))/1000; % bin spacing
-pMin = -0.5;                % low Z val
-pMax = 1.0;                 % high Z val
+pMin = -0.25;                % low Z val
+pMax = 0.5;                 % high Z val
 N_lo = floor(pMin/dax);     % low bin
 N_hi = ceil(pMax/dax);      % high bin
 AXIS = dax*(N_lo:N_hi);     % comparison axis
@@ -66,7 +66,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 30000;
+ESsteps = 500;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -120,7 +120,8 @@ for j=1:ESsteps-1;
     PARAM.LI20.T566  = p(1)*PARAM.LI20.R56^2 + p(2)*PARAM.LI20.R56 + p(3);
     
     % Run LiTrack
-    OUT = LiTrackOpt('FACETpar');
+    %OUT = LiTrackOpt('FACETpar');
+    OUT = LiTrackOpt('FACETconNotch');
     Part_frac(j) = 1 - OUT.I.PART(2)/PARAM.INIT.NESIM;
     
     
@@ -129,7 +130,8 @@ for j=1:ESsteps-1;
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
-    residual(j) = sum(PROF.*(SIM - PROF).^2);
+    %residual(j) = sum(PROF.*(SIM - PROF).^2);
+    residual(j) = sum((SIM - PROF).^2);
     
     % Set Cost as the value of the residual
     cost(j) = residual(j);
@@ -175,11 +177,11 @@ for j=1:ESsteps-1;
     
     figure(1);
     subplot(2,2,1);
-    plot(AXIS,PROF,'g',AXIS,SIM,'b','linewidth',2);
-    %axis([-4 4 0 4e-3]);
-    xlabel('X (mm)','fontsize',12);
-    title('Bunch Spectra','fontsize',10);
-    legend('DATA','SIM');
+    plot(1000*AXIS,PROF,'g',1000*AXIS,SIM,'b','linewidth',2);
+    axis([1000*pMin 1000*pMax 0 0.04]);
+    xlabel('Z (\mum)','fontsize',12);
+    title('Beam Profiles','fontsize',10);
+    legend('MODEL','SIM');
     
     subplot(2,2,2);
     plot(1:ESsteps,residual,'color','r','linewidth',2);
@@ -205,7 +207,7 @@ toc
 
 % Plot Output
 figure(2)
-plot(AXIS,PROF,'g',AXIS,SIM,'b');
-legend('DATA','ES-SIMULATION');
-xlabel('X (mm)','fontsize',14);
+plot(1000*AXIS,PROF,'g',1000*AXIS,SIM,'b');
+legend('TEMPLATE','ES-SIMULATION');
+xlabel('Z (\um)','fontsize',14);
 text(-3.5,5e-3,['Residual = ' num2str(residual(j-1),'%0.2e')],'fontsize',14);
