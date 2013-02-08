@@ -66,7 +66,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 30000;
+ESsteps = 300;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
