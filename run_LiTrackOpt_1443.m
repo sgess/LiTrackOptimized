@@ -5,8 +5,10 @@ fontsize = 14;
 show = 1;
 
 % Load spectrum data
-load('data_samples_1108.mat');
-data_spectrum = spec/sum(spec);
+load('data_samples_1443.mat');
+%spec = mean(SPECTRA(:,:),2);
+%data_spectrum = spec/sum(spec);
+data_spectrum = SPECTRA(:,2)/sum(SPECTRA(:,2));
 spectrum_axis = spectrum_axis/1000;
 
 % Load wakefield data
@@ -20,8 +22,8 @@ global PARAM;
 ESsteps   = 200;
 
 % Initialize parameters
-par_lims_1108;
-param_1108;
+par_lims_1443;
+param_1443;
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps); 
 pCurrent = zeros(nPar,1);
@@ -70,8 +72,9 @@ for j=1:ESsteps;
     sim_spectrum = interpSimSpec(OUT,spectrum_axis,PARAM.SIMU.BIN,delta,PARAM.LI20.R16);
     
     % Calculate residual
-    residual(j) = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
-    
+    %residual(j) = sum(data_spectrum.*(sim_spectrum - data_spectrum).^2);
+    residual(j) = sum((sim_spectrum - data_spectrum).^2);
+
     % Set Cost as the value of the residual + particle fraction
     %cost(j) = 20 + log(residual(j)) + 0.001*Part_frac(j);
     cost(j) = 20 + log(residual(j));
@@ -112,14 +115,14 @@ for j=1:ESsteps;
         figure(1);
         subplot(2,2,1);
         plot(spectrum_axis,data_spectrum,'g',spectrum_axis,sim_spectrum,'b','linewidth',2);
-        axis([-4 4 0 6e-3]);
+        axis([-5 5 0 3.5e-3]);
         xlabel('X (mm)','fontsize',12);
         title('Bunch Spectra','fontsize',10);
         legend('DATA','SIM');
         
         subplot(2,2,2);
         plot(1:ESsteps,residual,'color','r','linewidth',2);
-        axis([0 ESsteps 0 7e-6]);
+        axis([0 ESsteps 0 2e-4]);
         xlabel('Step','fontsize',12);
         title('Residual','fontsize',10);
         
@@ -131,7 +134,7 @@ for j=1:ESsteps;
         
         subplot(2,2,4);
         plot(1:ESsteps,cost,'color','b','linewidth',2);
-        axis([0 ESsteps 0 9]);
+        axis([0 ESsteps 0 12]);
         xlabel('Step','fontsize',12);
         title('Cost','fontsize',10);
         
