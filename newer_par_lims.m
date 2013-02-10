@@ -59,3 +59,9 @@ High_limit= [10e-3;
          
 Cent=(High_limit+Low_limit)/2;
 Diff=High_limit-Low_limit;
+
+nPar = 18;
+
+if length(par_name) ~= nPar
+    error('Update number of parameters');
+end
