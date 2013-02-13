@@ -17,7 +17,7 @@ A = load('slac.dat');
 global PARAM;
 
 % Set number of sim steps
-ESsteps   = 200;
+ESsteps   = 30000;
 
 % Initialize parameters
 par_lims_tcav;
@@ -102,6 +102,10 @@ for j=1:ESsteps;
     PARAM.LI20.R16   = pCurrent(14);  % Dispersion
     PARAM.LI20.T166  = pCurrent(15);  % 2nd Order Dispersion
     delta            = pCurrent(16);  % Energy offset
+    
+    % Set dependent params
+    PARAM.LONE.PHAS = decker+ramp;  % Total Phase
+    PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
     
     % Record evolving params
     params(:,j)  = pCurrent;

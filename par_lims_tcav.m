@@ -16,14 +16,14 @@ par_name = {'Initial bunch length';
             'Energy Offset';};
 
 % Lower limit on params    
-Low_limit = [4e-3;
-             4e-4;
+Low_limit = [5e-3;
+             5e-4;
              1.7e10;
              -0.4;
-             0.040;
+             0.039;
              88;
              0.58;
-             0.9;
+             0.8;
              -20;
              -5;
              -0.04;
@@ -34,14 +34,14 @@ Low_limit = [4e-3;
              -0.01;];
          
 % Higher limit on params                 
-High_limit= [10e-3;
-             12e-4;
-             1.9e10;
+High_limit= [9e-3;
+             11e-4;
+             2.0e10;
              0.05;
-             0.048;
-             91;
+             0.049;
+             92;
              0.63;
-             1.1;
+             1.2;
              -17;
              +5;
              -0.02;

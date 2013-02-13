@@ -12,8 +12,8 @@ PARAM.ENRG.E1    = 9.0;     % Energy at S10 (GeV)
 PARAM.ENRG.E2    = 20.35;   % Energy at S20 (GeV)
 
 % Beam initial conditions
-PARAM.INIT.SIGZ0 = 9.00E-3; % RMS bunch length (m)
-PARAM.INIT.SIGD0 = 6.00E-4; % RMS energy spread
+PARAM.INIT.SIGZ0 = 7.00E-3; % RMS bunch length (m)
+PARAM.INIT.SIGD0 = 8.00E-4; % RMS energy spread
 PARAM.INIT.Z0BAR = 0;       % Z offset
 PARAM.INIT.D0BAR = 0;       % Energy offset
 PARAM.INIT.NESIM = 2E5;     % Number of simulated macro particles
@@ -24,7 +24,7 @@ PARAM.INIT.CUT   = 6;       % Not sure what this is
 
 % NRTL bunch compressor
 PARAM.NRTL.AMPL  = 0.042;   % RTL compressor ampl (MV)
-PARAM.NRTL.PHAS  = 89.00;   % RTL compressor phase (deg)
+PARAM.NRTL.PHAS  = 90.00;   % RTL compressor phase (deg)
 PARAM.NRTL.LEFF  = 2.1694;  % RTL cavity length (m)
 PARAM.NRTL.R56   = 0.6026;  % RTL chicane R56 (m)
 PARAM.NRTL.T566  = 1.000;   % RTL chicane T566 (m)
@@ -34,7 +34,7 @@ PARAM.NRTL.EHI   = 0.0300;  % RTL upper momentum cut (GeV)
 % LI02-LI10 acceleration
 PARAM.LONE.LEFF  = 809.5;   % Length of LI02-LI10 (m)
 PARAM.LONE.CHRP  = 3.0536;  % chirp in 2-10 (GeV)
-decker           = -19.00;  % Chirping phase
+decker           = -19.50;  % Chirping phase
 ramp             = -1.00;   % Ramped phase
 PARAM.LONE.PHAS = decker+ramp; % Total phase
 PARAM.LONE.FBAM  = 0.235;   % feedback amplitude at S10 (GV)
@@ -61,7 +61,7 @@ PARAM.LI20.T566  = 0.100;   % Sector 20 chicane T566 (m) % = 100 mm for R56 = 5m
 PARAM.LI20.ISR   = 0.8E-5;  % ISR energy spread from bends
 PARAM.LI20.ELO   = -0.035;  % RTL lower momentum cut (GeV)
 PARAM.LI20.EHI   = 0.035;   % RTL upper momentum cut (GeV)
-PARAM.LI20.R16   = 130;     % Dispersion at YAG
+PARAM.LI20.R16   = 120;     % Dispersion at YAG
 PARAM.LI20.T166  = 0.00;    % Second order dispersion at YAG
 PARAM.LI20.BETA  = 5.0;     % Beta function at YAG
 PARAM.LI20.EMIT  = 100e-6;  % Emittance in S20
