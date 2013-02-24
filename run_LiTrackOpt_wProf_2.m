@@ -3,11 +3,24 @@ clear all;
 fontsize = 14;
 
 % Load sample profile
-x = randn(1,100000);
-y = randn(1,50000);
-d = [25*x, 25*y+150];
-nBins =  128;
-[n,ax]=hist(d,nBins);
+% x = randn(1,100000);
+% y = randn(1,50000);
+% d = [25*x, 25*y+150];
+% nBins =  128;
+% [n,ax]=hist(d,nBins);
+
+N_drive = 100000;
+N_witness = 50000;
+Sig_drive = 25;
+Sig_witness = 25;
+separation = 150;
+nBins = 128;
+
+N_wit = [40000 45000 50000 55000 60000];
+Sep = [120 135 150 165 180];
+
+%Load sample profiles
+[n, ax] = MAKE_PROF(N_drive,N_witness,Sig_drive,Sig_witness,separation,nBins);
 
 % Create axis for comparing profiles
 dax = (ax(2) - ax(1))/1000; % bin spacing
