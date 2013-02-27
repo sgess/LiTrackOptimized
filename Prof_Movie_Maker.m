@@ -1,5 +1,5 @@
 % Number of spectrums to plot
-nspec=500;
+nspec=100;
 
 % Chunks to break up total steps into, to plot total of nspec
 chn=floor(ESsteps/nspec);
@@ -13,7 +13,7 @@ A = load('slac.dat');
 
 
 % Spectrum Movie
-writerObj = VideoWriter('Beam_Prof_Feb_7.avi'); % Name it.
+writerObj = VideoWriter('Beam_MORPH2_Feb_9.avi'); % Name it.
 writerObj.FrameRate = 30; % How many frames per second.
 open(writerObj); 
 
@@ -73,6 +73,30 @@ for jsm=1:nspec;
     %cost(j) = 20 + log(residual(j));
     
     
+    % Check the size of PROF, and cut off profile to have the same length
+    dprof=zeros(1,length(PROF));
+    dprof(1,:)=profile(1,1:length(PROF));
+    
+    
+    % Morph into the new shape over cs time steps, then stop morphing
+    if 1+(jsm-1)*chn>cs;
+        if j<2*cs+1;
+            j3=j3+1+(jsm-1)*chn;
+        end
+    end
+    
+    % Slowly transform back into the original shape, to try some
+    % "trajectory tracking"
+    if 1+(jsm-1)*chn>3*cs;
+        if j3>1.5;
+            j3=j3-0.5*(1+(jsm-1)*chn);
+        end
+    end
+    
+    
+    PROF=((cs-j3)/(cs-1))*PROF+((j3-1)/cs)*dprof;
+    
+    
     
     
     fid=figure;
@@ -112,7 +136,7 @@ for jsm=1:nspec;
     close all
     
 end
-    
+
 hold off
 close(writerObj); % Saves the movie.
 

@@ -58,7 +58,7 @@ n_par = 18;
 %w0=1000;
 %w00=5000;
 
-w0 = 1500;
+w0 = 3000;
 w00 = 50000;
 
 w=zeros(1,n_par);
@@ -79,7 +79,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 2000;
+ESsteps = 40000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -122,11 +122,38 @@ params(17,1) = PARAM.LI20.NHI;
 params(18,1) = 0;
 
 
+
+% Keep track of the simulation and profile outputs
+sim_track=zeros(ESsteps,300);
+PROF_track=zeros(ESsteps,300);
+
+
+% Create a new profile for the beam to form into
+profile = zeros(1,300);
+
+for j=1:300;
+   profile(j)= 0.015/(1+0.01*(j-100)^2)+0.03/(1+0.05*(j-150)^2);
+end
+
+% Number of steps over which to Morph
+cs=2000;
+
+j3=1;
+
+PROF0=zeros(1,length(PROF));
+PROF0(1,:)=PROF(1,:);
+
+
 figure(1);
 
 tic
 for j=1:ESsteps-1;
     j
+    
+    
+    
+    
+    
     
     PARAM.LONE.PHAS = decker+ramp;  % Total Phase
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -140,6 +167,38 @@ for j=1:ESsteps-1;
     
     % Interpolate simulated spectrum
     SIM = interpSimProf(OUT,PARAM.SIMU.BIN,2,AXIS,dZ);
+    sim_track(j,1:length(SIM))=SIM(1,:);
+    
+    
+    % Check the size of PROF, and cut off profile to have the same length
+    dprof=zeros(1,length(PROF));
+    dprof(1,:)=profile(1,1:length(PROF));
+    
+    
+    % Morph into the new shape over cs time steps, then stop morphing
+    if j>cs;
+        if j<2*cs+1;
+            j3=j3+1;
+        end
+    end
+    
+    % Wait a while, for it to match the new, morphed shape, then
+    % slowly transform back into the original shape, try moving slow enough 
+    % so that the ES can keep up and perform some trajectory tracking
+    
+    if j>4*cs;
+        if j3>1.125;
+            j3=j3-0.125;
+        end
+    end
+    
+    
+    
+    PROF=((cs-j3)/(cs-1))*PROF0(1,1:length(PROF))+((j3-1)/cs)*dprof;
+    
+    PROF_track(j,1:length(PROF))=PROF(1,:);
+
+    
     
     % Calculate residual
     %residual(j) = sum((sim_spectrum - data_spectrum).^2);
@@ -190,12 +249,13 @@ for j=1:ESsteps-1;
     
     
     
+    
 end
 toc
 
 
 % Save the results
-save('Feb_7_Prof')
+save('Feb_10_MORPH')
 
 
 
