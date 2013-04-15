@@ -7,6 +7,7 @@ ploT = 1;
 
 fp = load('concat_full_pyro.mat');
 hp = load('concat_half_pyro.mat');
+load('params_fp_390.mat');
 
 half = 1;
 full = 0;
@@ -17,7 +18,7 @@ fp_lo_py = 389;
 fp_hi_py = 59;
 
 spec_axis = fp.cat_dat.yag_ax;
-spec_thing = fp.cat_dat.YAG_SPEC(:,fp_hi_py);
+spec_thing = fp.cat_dat.YAG_SPEC(:,fp_lo_py);
 
 % Load wakefield data
 global A;

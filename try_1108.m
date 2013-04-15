@@ -1,11 +1,11 @@
 %clear all;
-
+load('concat_full_pyro.mat');
 %load('retry_1108.mat');
 load('retry_1103.mat');
 %spec_axis = DATA.AXIS.xx/1000;
 %spec_thing = DATA.YAG.spectrum(:,59);
 spec_axis = cat_dat.yag_ax;
-spec_thing = cat_dat.YAG_SPEC(:,390);
+spec_thing = cat_dat.YAG_SPEC(:,59);
 
 
 %addpath(genpath('LiTrack'));
@@ -89,7 +89,7 @@ pInit = pCurrent;
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;               % ES parameter
-gain      = 1*1600e-11;        % ES parameter
+gain      = 10*1600e-11;        % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
