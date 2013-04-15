@@ -16,7 +16,7 @@ par_name = {'Initial bunch length';
 % Lower limit on params    
 Low_limit = [6e-3;
              7e-4;
-             1.6e10;
+             1.5e10;
              -0.4;
              0.033;
              88;
@@ -32,7 +32,7 @@ Low_limit = [6e-3;
 % Higher limit on params                 
 High_limit= [10e-3;
              10e-4;
-             2.4e10;
+             2.2e10;
              0.05;
              0.046;
              92;

@@ -1,6 +1,9 @@
-clear all;
+%clear all;
 
-load('retry_1108.mat');
+%load('retry_1108.mat');
+%load('retry_1103.mat');
+spec_axis = DATA.AXIS.xx/1000;
+spec_thing = DATA.YAG.spectrum(:,59);
 
 %addpath(genpath('LiTrack'));
 fontsize = 14;
@@ -24,42 +27,72 @@ par_lims_retry1108;
 param_tcav;
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps); 
-pCurrent = zeros(nPar,1);
-l_two = 0;
-pCurrent(1)  = PARAM.INIT.SIGZ0;    % Bunch Length
-pCurrent(2)  = PARAM.INIT.SIGD0;    % Initial Energy Spread
-pCurrent(3)  = PARAM.INIT.NPART;    % Number of Particles
-pCurrent(4)  = PARAM.INIT.ASYM;     % Initial Gaussian Asymmetry
-pCurrent(5)  = PARAM.NRTL.AMPL;     % Amplitude of RF Compressor
-pCurrent(6)  = PARAM.NRTL.PHAS;     % RF Compressor Phase
-pCurrent(7)  = PARAM.NRTL.R56;      % RTL compression
-pCurrent(8)  = PARAM.NRTL.T566;     % RTL second order compression
-pCurrent(9)  = decker;              % 2-10 Phase
-pCurrent(10) = l_two;              % 11-20 Phase
-pCurrent(11) = ramp;                % Ramp Phase
-pCurrent(12) = PARAM.LI20.BETA;     % Beta Function
-pCurrent(13) = PARAM.LI20.R16;      % Dispersion
-pCurrent(14) = PARAM.LI20.T166;     % 2nd Order Dispersion
 
-PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
-PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+use_new = 0;
 
-PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
-PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+if use_new
+    
+    pCurrent = zeros(nPar,1);
+    pCurrent(1)  = PARAM.INIT.SIGZ0;    % Bunch Length
+    pCurrent(2)  = PARAM.INIT.SIGD0;    % Initial Energy Spread
+    pCurrent(3)  = PARAM.INIT.NPART;    % Number of Particles
+    pCurrent(4)  = PARAM.INIT.ASYM;     % Initial Gaussian Asymmetry
+    pCurrent(5)  = PARAM.NRTL.AMPL;     % Amplitude of RF Compressor
+    pCurrent(6)  = PARAM.NRTL.PHAS;     % RF Compressor Phase
+    pCurrent(7)  = PARAM.NRTL.R56;      % RTL compression
+    pCurrent(8)  = PARAM.NRTL.T566;     % RTL second order compression
+    pCurrent(9)  = decker;              % 2-10 Phase
+    pCurrent(10) = l_two;              % 11-20 Phase
+    pCurrent(11) = ramp;                % Ramp Phase
+    pCurrent(12) = PARAM.LI20.BETA;     % Beta Function
+    pCurrent(13) = PARAM.LI20.R16;      % Dispersion
+    pCurrent(14) = PARAM.LI20.T166;     % 2nd Order Dispersion
+    
+    PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
+    PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+    
+    PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
+    PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+
+else
+    
+    PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
+    PARAM.INIT.SIGD0 = pCurrent(2);   % Initial Energy Spread
+    PARAM.INIT.NPART = pCurrent(3);   % Number of Particles
+    PARAM.INIT.ASYM  = pCurrent(4);   % Initial Gaussian Asymmetry
+    PARAM.NRTL.AMPL  = pCurrent(5);   % Amplitude of RF Compressor
+    PARAM.NRTL.PHAS  = pCurrent(6);   % RF Compressor Phase
+    PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
+    PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
+    decker           = pCurrent(9);   % 2-10 Phase
+    l_two            = pCurrent(10);  % 11-20 Phase
+    ramp             = pCurrent(11);  % Ramp Phase    
+    PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
+    PARAM.LI20.R16   = pCurrent(13);  % Dispersion
+    PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+
+    % Set dependent params
+    PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
+    PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+    
+    PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
+    PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+    
+end
 
 % Record initial values
 pInit = pCurrent;
     
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
-alpha     = 1000;               % ES parameter
-gain      = 20*1600e-10;        % ES parameter
+alpha     = 500;               % ES parameter
+gain      = 5*1600e-11;        % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
 
 
-if show; figure(1); figure(2); end;
+if show; figure(1); end;
 
 j = 0;
 k = 0;
@@ -118,7 +151,7 @@ while j <= ESsteps
     
     % Calculate residual
     %residual(j) = sum(Line_minBG.*(ProfXLi' - Line_minBG).^2);
-    residual(j+1) = sum((ProfXLi - Line_minBG).^2);
+    residual(j+1) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
 
     % Set Cost as the value of the residual + particle fraction
     cost(j+1) = residual(j+1);
