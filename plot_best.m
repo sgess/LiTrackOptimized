@@ -11,10 +11,10 @@ nmin = 60;
 nmax = 2000;
 
 nOut = 3;
-savE = 1;
+savE = 0;
 
 spec_axis = cat_dat.yag_ax;
-spec_thing = cat_dat.YAG_SPEC(:,389);
+spec_thing = cat_dat.YAG_SPEC(:,59);
 
 [a,b] = min(residual(1:nmax));
 pCurrent = params(:,b-1);
@@ -42,7 +42,7 @@ PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
 PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
 
 OUT = LiTrackOpt('FACETpar');
-
+OUT.I.PEAK(3)
 xx = spec_axis';
 Lineout = spec_thing;
 
