@@ -1,4 +1,4 @@
-figure(3);
+figure(6);
 
 twop = 56;
 
@@ -9,7 +9,7 @@ for i = (twop+1):length(params)
 end
 
 nmin = 60;
-nmax = 5000;
+nmax = 1000;
 
 subplot(7,2,1);
 plot(par_avg(1,nmin:nmax));
