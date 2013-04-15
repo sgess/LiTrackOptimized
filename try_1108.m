@@ -24,7 +24,7 @@ A = load('slac.dat');
 global PARAM;
 
 % Set number of sim steps
-ESsteps   = 10000;
+ESsteps   = 2000;
 
 % Initialize parameters
 par_lims_retry1108;

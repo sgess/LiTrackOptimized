@@ -1,5 +1,5 @@
 nmin = 60;
-nmax = 5000;
+nmax = 2000;
 
 savE = 0;
 
@@ -16,7 +16,7 @@ PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
 PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
 decker           = pCurrent(9);   % 2-10 Phase
 l_two            = pCurrent(10);  % 11-20 Phase
-ramp             = pCurrent(11)-1.5;  % Ramp Phase
+ramp             = pCurrent(11);  % Ramp Phase
 PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
 PARAM.LI20.R16   = pCurrent(13);  % Dispersion
 PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
