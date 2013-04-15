@@ -1,11 +1,12 @@
 %clear all;
-load('concat_full_pyro.mat');
+%load('concat_full_pyro.mat');
+load('concat_1103.mat');
 %load('retry_1108.mat');
 load('retry_1103.mat');
 %spec_axis = DATA.AXIS.xx/1000;
 %spec_thing = DATA.YAG.spectrum(:,59);
 spec_axis = cat_dat.yag_ax;
-spec_thing = cat_dat.YAG_SPEC(:,59);
+spec_thing = cat_dat.YAG_SPEC(:,389);
 
 
 %addpath(genpath('LiTrack'));

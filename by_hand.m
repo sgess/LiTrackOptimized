@@ -5,12 +5,13 @@ highest = 1024;
 savE = 0;
 ploT = 1;
 
-fp = load('concat_full_pyro.mat');
+%fp = load('concat_full_pyro.mat');
+fp = load('concat_1103.mat');
 hp = load('concat_half_pyro.mat');
 load('params_fp_390.mat');
 
-half = 1;
-full = 0;
+half = 0;
+full = 1;
 
 nOut = 3;
 
