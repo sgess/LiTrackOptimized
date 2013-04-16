@@ -1,5 +1,6 @@
 load('concat_1103.mat');
 load('retry_1103.mat');
+load('more_pars_1103_59.mat');
 
 global A;
 A = load('slac.dat');
@@ -11,7 +12,7 @@ nmin = 60;
 nmax = 2000;
 
 nOut = 3;
-savE = 0;
+savE = 1;
 
 spec_axis = cat_dat.yag_ax;
 spec_thing = cat_dat.YAG_SPEC(:,59);
@@ -63,9 +64,9 @@ figure(1);
 plot(line_x,Line_minBG,'b',line_x,ProfXLi,'g','linewidth',2);
 xlabel('X (mm)');
 legend('sYAG','LiTrack');
-if savE; saveas(gca,'~/Desktop/matched_spec_full_pyro.png');end;
+if savE; saveas(gca,'~/Desktop/matched_spec_fullest_pyro.png');end;
 
 figure(2);
 plot(OUT.Z.AXIS(:,nOut),OUT.Z.HIST(:,nOut),'r','linewidth',2);
 xlabel('Z (mm)');
-if savE; saveas(gca,'~/Desktop/bunch_prof_full_pyro.png');end;
+if savE; saveas(gca,'~/Desktop/bunch_prof_fullest_pyro.png');end;
