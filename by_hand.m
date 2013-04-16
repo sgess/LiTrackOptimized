@@ -8,7 +8,8 @@ ploT = 1;
 %fp = load('concat_full_pyro.mat');
 fp = load('concat_1103.mat');
 hp = load('concat_half_pyro.mat');
-load('params_fp_390.mat');
+%load('more_pars_1103_59.mat');
+load('more_pars_1103_389');
 
 half = 0;
 full = 1;
@@ -19,7 +20,7 @@ fp_lo_py = 389;
 fp_hi_py = 59;
 
 spec_axis = fp.cat_dat.yag_ax;
-spec_thing = fp.cat_dat.YAG_SPEC(:,fp_lo_py);
+spec_thing = fp.cat_dat.YAG_SPEC(:,fp_hi_py);
 
 % Load wakefield data
 global A;
@@ -29,11 +30,12 @@ A = load('slac.dat');
 global PARAM;
 param_tcav;
 nmax = 0;
-residual = 0;
+%residual = 0;
+[c,v] = min(residual);
 for i = 1:1
 %[a,b] = min(residual(1:nmax));
 %pCurrent = params(:,b-1);
-nmax(i) = 999+i;
+nmax = v+i-1;
 pCurrent = params(:,nmax);
 
 PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
@@ -46,7 +48,7 @@ PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
 PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
 decker           = pCurrent(9);   % 2-10 Phase
 l_two            = pCurrent(10);  % 11-20 Phase
-ramp             = pCurrent(11);  % Ramp Phase
+ramp             = pCurrent(11)+10.0*0.2;  % Ramp Phase
 PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
 PARAM.LI20.R16   = pCurrent(13);  % Dispersion
 PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
@@ -59,7 +61,7 @@ PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
 PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
 
 OUT = LiTrackOpt('FACETpar');
-
+OUT.I.PEAK(3)
 xx = spec_axis';
 Lineout = spec_thing;
 
@@ -77,7 +79,7 @@ ProfXLi = normX*SimDisp;
 
 %nmax
 %residual(i) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
-residual(i) = sum((ProfXLi - Line_minBG).^2);
+%residual(i) = sum((ProfXLi - Line_minBG).^2);
 
 if ploT
 figure(1);
