@@ -12,28 +12,24 @@ nmin = 60;
 nmax = 2000;
 
 nOut = 3;
-savE = 1;
+savE = 0;
 
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,59);
+params_fixed;
 
 [a,b] = min(residual(1:nmax));
-pCurrent = params(:,b-1);
+pCurrent = params(:,b);
 
 PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
 PARAM.INIT.SIGD0 = pCurrent(2);   % Initial Energy Spread
-PARAM.INIT.NPART = pCurrent(3);   % Number of Particles
+PARAM.INIT.NPART = pCurrent(3)+0;   % Number of Particles
 PARAM.INIT.ASYM  = pCurrent(4);   % Initial Gaussian Asymmetry
 PARAM.NRTL.AMPL  = pCurrent(5);   % Amplitude of RF Compressor
-PARAM.NRTL.PHAS  = pCurrent(6);   % RF Compressor Phase
-PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
-PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
-decker           = pCurrent(9);   % 2-10 Phase
-l_two            = pCurrent(10);  % 11-20 Phase
-ramp             = pCurrent(11);  % Ramp Phase
-PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
-PARAM.LI20.R16   = pCurrent(13);  % Dispersion
-PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+PARAM.NRTL.PHAS  = pCurrent(6)+0.0;   % RF Compressor Phase
+decker           = pCurrent(7);   % 2-10 Phase
+l_two            = pCurrent(8);  % 11-20 Phase
+ramp             = pCurrent(9);  % Ramp Phase
 
 % Set dependent params
 PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
@@ -41,6 +37,15 @@ PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energ
 
 PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
 PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+
+
+
+
+PARAM.LI20.R56 = 0.005;
+PARAM.LI20.T566 = -0.4;
+
+
+
 
 OUT = LiTrackOpt('FACETpar');
 OUT.I.PEAK(3)

@@ -1,20 +1,12 @@
-%clear all;
-%load('concat_full_pyro.mat');
-%load('concat_1103.mat');
+clear all;
 load('concat_full_pyro_wide.mat');
-%load('retry_1108.mat');
-%load('retry_1103.mat');
-%spec_axis = DATA.AXIS.xx/1000;
-%spec_thing = DATA.YAG.spectrum(:,59);
+
 spec_axis = cat_dat.yag_ax;
-spec_thing = cat_dat.YAG_SPEC(:,390);
+spec_thing = cat_dat.YAG_SPEC(:,13);
 
-
-%addpath(genpath('LiTrack'));
 fontsize = 14;
 
-
-show = 0;
+show = 1;
 nOut = 3;
 
 % Load wakefield data
@@ -28,11 +20,12 @@ global PARAM;
 ESsteps   = 2000;
 
 % Initialize parameters
-par_lims_retry1108;
-param_tcav;
+par_lims_fixed;
+params_fixed;
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps); 
-
+PARAM.NRTL.PHAS = 91;
+PARAM.INIT.NPART=1.7e10;
 use_new = 1;
 
 if use_new
@@ -44,14 +37,9 @@ if use_new
     pCurrent(4)  = PARAM.INIT.ASYM;     % Initial Gaussian Asymmetry
     pCurrent(5)  = PARAM.NRTL.AMPL;     % Amplitude of RF Compressor
     pCurrent(6)  = PARAM.NRTL.PHAS;     % RF Compressor Phase
-    pCurrent(7)  = PARAM.NRTL.R56;      % RTL compression
-    pCurrent(8)  = PARAM.NRTL.T566;     % RTL second order compression
-    pCurrent(9)  = decker;              % 2-10 Phase
-    pCurrent(10) = l_two;              % 11-20 Phase
-    pCurrent(11) = ramp;                % Ramp Phase
-    pCurrent(12) = PARAM.LI20.BETA;     % Beta Function
-    pCurrent(13) = PARAM.LI20.R16;      % Dispersion
-    pCurrent(14) = PARAM.LI20.T166;     % 2nd Order Dispersion
+    pCurrent(7)  = decker;              % 2-10 Phase
+    pCurrent(8) = l_two;              % 11-20 Phase
+    pCurrent(9) = ramp;                % Ramp Phase
     
     PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -67,14 +55,9 @@ else
     PARAM.INIT.ASYM  = pCurrent(4);   % Initial Gaussian Asymmetry
     PARAM.NRTL.AMPL  = pCurrent(5);   % Amplitude of RF Compressor
     PARAM.NRTL.PHAS  = pCurrent(6);   % RF Compressor Phase
-    PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
-    PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
-    decker           = pCurrent(9);   % 2-10 Phase
-    l_two            = pCurrent(10);  % 11-20 Phase
-    ramp             = pCurrent(11);  % Ramp Phase    
-    PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
-    PARAM.LI20.R16   = pCurrent(13);  % Dispersion
-    PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+    decker           = pCurrent(7);   % 2-10 Phase
+    l_two            = pCurrent(8);  % 11-20 Phase
+    ramp             = pCurrent(9);  % Ramp Phase    
 
     % Set dependent params
     PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
@@ -91,7 +74,7 @@ pInit = pCurrent;
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;               % ES parameter
-gain      = 50*1600e-11;        % ES parameter
+gain      = 100*1600e-11;        % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
@@ -121,10 +104,10 @@ while j <= ESsteps
     
     display(j);
        
-    del = 100*center/pCurrent(13);
+    del = 100*center/PARAM.LI20.R16;
 
     % Calculate delta axis
-    dd = 100*(line_x-center)/pCurrent(13);
+    dd = 100*(line_x-center)/PARAM.LI20.R16;
     
     
     %%%%%%%%%%%%%%%%%%%%
@@ -176,14 +159,9 @@ while j <= ESsteps
     PARAM.INIT.ASYM  = pCurrent(4);   % Initial Gaussian Asymmetry
     PARAM.NRTL.AMPL  = pCurrent(5);   % Amplitude of RF Compressor
     PARAM.NRTL.PHAS  = pCurrent(6);   % RF Compressor Phase
-    PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
-    PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
-    decker           = pCurrent(9);   % 2-10 Phase
-    l_two            = pCurrent(10);  % 11-20 Phase
-    ramp             = pCurrent(11);  % Ramp Phase    
-    PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
-    PARAM.LI20.R16   = pCurrent(13);  % Dispersion
-    PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+    decker           = pCurrent(7);   % 2-10 Phase
+    l_two            = pCurrent(8);  % 11-20 Phase
+    ramp             = pCurrent(9);  % Ramp Phase    
 
     % Set dependent params
     PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)

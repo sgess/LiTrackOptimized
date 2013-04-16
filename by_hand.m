@@ -6,10 +6,12 @@ savE = 0;
 ploT = 1;
 
 %fp = load('concat_full_pyro.mat');
-fp = load('concat_1103.mat');
-hp = load('concat_half_pyro.mat');
+%fp = load('concat_1103.mat');
+fp = load('concat_full_pyro_wide.mat');
+%hp = load('concat_half_pyro.mat');
+
 %load('more_pars_1103_59.mat');
-load('more_pars_1103_389');
+%load('more_pars_1103_389');
 
 half = 0;
 full = 1;
@@ -20,7 +22,7 @@ fp_lo_py = 389;
 fp_hi_py = 59;
 
 spec_axis = fp.cat_dat.yag_ax;
-spec_thing = fp.cat_dat.YAG_SPEC(:,fp_hi_py);
+spec_thing = fp.cat_dat.YAG_SPEC(:,13);
 
 % Load wakefield data
 global A;
@@ -40,18 +42,18 @@ pCurrent = params(:,nmax);
 
 PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
 PARAM.INIT.SIGD0 = pCurrent(2);   % Initial Energy Spread
-PARAM.INIT.NPART = pCurrent(3);   % Number of Particles
+PARAM.INIT.NPART = pCurrent(3)-8.0*1e8;   % Number of Particles
 PARAM.INIT.ASYM  = pCurrent(4);   % Initial Gaussian Asymmetry
-PARAM.NRTL.AMPL  = pCurrent(5);   % Amplitude of RF Compressor
-PARAM.NRTL.PHAS  = pCurrent(6);   % RF Compressor Phase
+PARAM.NRTL.AMPL  = pCurrent(5)+0.0*0.0001;   % Amplitude of RF Compressor
+PARAM.NRTL.PHAS  = pCurrent(6)-0.0*0.1;   % RF Compressor Phase
 PARAM.NRTL.R56   = pCurrent(7);   % RTL Compression
 PARAM.NRTL.T566  = pCurrent(8);   % RTL Second order compression
-decker           = pCurrent(9);   % 2-10 Phase
-l_two            = pCurrent(10);  % 11-20 Phase
-ramp             = pCurrent(11)+10.0*0.2;  % Ramp Phase
+decker           = pCurrent(9)+12.0*0.2;   % 2-10 Phase
+l_two            = pCurrent(10)+0.0*0.2;  % 11-20 Phase
+ramp             = pCurrent(11)+0.0*0.2;  % Ramp Phase
 PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
 PARAM.LI20.R16   = pCurrent(13);  % Dispersion
-PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+PARAM.LI20.T166  = pCurrent(14)+4.0*100;  % 2nd Order Dispersion
 
 % Set dependent params
 PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
@@ -95,5 +97,5 @@ if savE; saveas(gca,'~/Desktop/bunch_prof_half_pyro.png');end;
 end
 end
 
-figure(3);
-plot(nmax,residual)
+%figure(3);
+%plot(nmax,residual)
