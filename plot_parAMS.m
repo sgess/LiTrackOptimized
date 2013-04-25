@@ -1,6 +1,6 @@
 figure(6);
 
-twop = 56;
+twop = 1;
 
 for i = (twop+1):length(params)
     
@@ -8,8 +8,8 @@ for i = (twop+1):length(params)
     
 end
 
-nmin = 60;
-nmax = 2000;
+nmin = 10;
+nmax = 350;
 
 subplot(7,2,1);
 plot(par_avg(1,nmin:nmax));

@@ -1,20 +1,22 @@
-%clear all;
+clear all;
 %load('concat_full_pyro.mat');
 %load('concat_1103.mat');
-load('concat_full_pyro_wide.mat');
+%load('concat_full_pyro_wide.mat');
 %load('retry_1108.mat');
 %load('retry_1103.mat');
+load('images_04_18_13.mat');
 %spec_axis = DATA.AXIS.xx/1000;
 %spec_thing = DATA.YAG.spectrum(:,59);
-spec_axis = cat_dat.yag_ax;
-spec_thing = cat_dat.YAG_SPEC(:,390);
-
+%spec_axis = cat_dat.yag_ax;
+%spec_thing = cat_dat.YAG_SPEC(:,390);
+spec_axis = spec_ax;
+spec_thing = specs(:,1);
 
 %addpath(genpath('LiTrack'));
 fontsize = 14;
 
 
-show = 0;
+show = 1;
 nOut = 3;
 
 % Load wakefield data
@@ -25,11 +27,14 @@ A = load('slac.dat');
 global PARAM;
 
 % Set number of sim steps
-ESsteps   = 2000;
+ESsteps   = 1000;
 
 % Initialize parameters
-par_lims_retry1108;
-param_tcav;
+par_lims_04_16_13;
+%par_lims_retry1108;
+param_04_16_13;
+%param_tcav;
+
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps); 
 
@@ -46,7 +51,8 @@ if use_new
     pCurrent(6)  = PARAM.NRTL.PHAS;     % RF Compressor Phase
     pCurrent(7)  = PARAM.NRTL.R56;      % RTL compression
     pCurrent(8)  = PARAM.NRTL.T566;     % RTL second order compression
-    pCurrent(9)  = decker;              % 2-10 Phase
+    %pCurrent(9)  = decker;              % 2-10 Phase
+    pCurrent(9)  = -27;
     pCurrent(10) = l_two;              % 11-20 Phase
     pCurrent(11) = ramp;                % Ramp Phase
     pCurrent(12) = PARAM.LI20.BETA;     % Beta Function
@@ -91,7 +97,7 @@ pInit = pCurrent;
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;               % ES parameter
-gain      = 50*1600e-11;        % ES parameter
+gain      = 10*1600e-10;        % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
@@ -157,6 +163,7 @@ while j <= ESsteps
     % Calculate residual
     %residual(j) = sum(Line_minBG.*(ProfXLi' - Line_minBG).^2);
     residual(j+1) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
+    %residual(j+1) = sum((ProfXLi - Line_minBG).^2);
 
     % Set Cost as the value of the residual + particle fraction
     cost(j+1) = residual(j+1);
