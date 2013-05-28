@@ -6,21 +6,21 @@ global A;
 A = load('slac.dat');
 
 global PARAM;
-param_tcav;
+%param_tcav;
 
 nmin = 1;
-nmax = 1000;
+nmax = 500;
 
 nOut = 3;
 savE = 0;
+old = 0;
 
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,59);
 
-[a,b] = min(residual(1:nmax));
-b = 5000;
-pCurrent = params(:,b);
 
+
+if old
 PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
 PARAM.INIT.SIGD0 = pCurrent(2);   % Initial Energy Spread
 PARAM.INIT.NPART = pCurrent(3);   % Number of Particles
@@ -62,10 +62,52 @@ PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energ
 
 PARAM.LTWO.PHAS = l_two+ramp;  % Total Phase
 PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+end
+
+
+param_04_16_13;
+
+pars_init = [0.0066;        0.0008;         2.0e10;       -0.15];
+sens_init = [0.2;           0.2;            0.1;           0.3];
+name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
+
+pars_nrtl = [0.0405;        90.00;         0.602;       1.3];
+sens_nrtl = [0.06;           0.01;            0.02;       0.1];
+name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
+
+pars_lone = [-23.0];
+sens_lone = [0.3];
+name_lone = {'LONE PHAS'};
+
+pars_ltwo = [1];
+sens_ltwo = [1];
+name_ltwo = {'LTWO PHAS'};
+
+pars_li20 = [1;             95;             50;        0.030;   -0.030;];
+sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
+name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
+
+pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
+sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
+name = [name_init; name_nrtl; name_lone; name_ltwo; name_li20];
+
+nPar = length(pars);
+[Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
+
+[a,b] = min(residual(1:nmax));
+pCurrent = params(:,b-1);
+pars = pCurrent;
+SetPars(pars, name, nPar);
+
+PARAM.LI20.T166  = -0;
+PARAM.NRTL.AMPL = 0.0398;
+PARAM.LONE.PHAS = -24;
+PARAM.LI20.R56 = 0.005;
+PARAM.LI20.T566 = 0.1;
 
 OUT = LiTrackOpt('FACETpar');
 OUT.I.PEAK(3)
-xx = spec_axis';
+xx = spec_axis;
 Lineout = spec_thing;
 
 Line_minBG = Lineout-Lineout(1);
