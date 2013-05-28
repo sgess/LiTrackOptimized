@@ -19,6 +19,11 @@ nBins = 128;
 N_wit = [40000 45000 50000 55000 60000];
 Sep = [120 135 150 165 180];
 
+% Try the different profiles
+N_witness = N_wit(1);
+seperation = Sep(1);
+
+
 %Load sample profiles
 [n, ax] = MAKE_PROF(N_drive,N_witness,Sig_drive,Sig_witness,separation,nBins);
 
@@ -58,7 +63,7 @@ n_par = 18;
 %w0=1000;
 %w00=5000;
 
-w0 = 1500;
+w0 = 3000;
 w00 = 50000;
 
 w=zeros(1,n_par);
@@ -79,7 +84,7 @@ end
 dt=(2*pi)/(4*max(w));
 
 % Total Number of Extremum Seeking Steps
-ESsteps = 100;
+ESsteps = 20000;
 
 % ES Time, a purely digital entity
 EST = ESsteps*dt;
@@ -195,9 +200,9 @@ toc
 
 
 % Save the results
-save('Feb_7_Prof')
+save('Feb_27_Nwit1_Sep1')
 
-%%
+
 
     figure(1);
     subplot(2,2,1);
@@ -232,3 +237,4 @@ plot(1000*AXIS,PROF,'g',1000*AXIS,SIM,'b');
 legend('TEMPLATE','ES-SIMULATION');
 xlabel('Z (\um)','fontsize',14);
 text(-3.5,5e-3,['Residual = ' num2str(residual(j-1),'%0.2e')],'fontsize',14);
+
