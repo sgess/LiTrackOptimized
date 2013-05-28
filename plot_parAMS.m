@@ -2,18 +2,16 @@ figure(6);
 
 twop = 1;
 
-for i = (twop+1):length(params)
+for i = 1:length(params)
     
-    par_avg(:,i) = mean(params(:,(i-twop):i),2);
+    par_avg(:,i) = params(:,i);
     
 end
 
-nmin = 10;
-nmax = 350;
-
 subplot(7,2,1);
-plot(par_avg(1,nmin:nmax));
+plot(sim_time,par_avg(1,:));
 title('NDR bunch length');
+datetick;
 
 subplot(7,2,2);
 plot(par_avg(2,nmin:nmax));

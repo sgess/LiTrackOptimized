@@ -14,35 +14,35 @@ par_name = {'Initial bunch length';
             'YAG 2nd Order Dispersion'};
 
 % Lower limit on params    
-Low_limit = [7.5e-3;
-             7e-4;
-             1.7e10;
+Low_limit = [6.5e-3;
+             6e-4;
+             1.5e10;
              -0.3;
-             0.036;
-             89;
+             0.033;
+             87;
              0.58;
              0.8;
-             -27;
+             -30;
              -5;
              -5;
              4;
-             100;
+             90;
              -2000;];
          
 % Higher limit on params                 
-High_limit= [9e-3;
-             9e-4;
-             2.2e10;
+High_limit= [10e-3;
+             10e-4;
+             2.4e10;
              -0.05;
-             0.040;
-             91;
+             0.043;
+             93;
              0.63;
              1.2;
-             -20;
+             -10;
              +5;
              +5;
              6.0;
-             130;
+             140;
              2000;];
          
 Cent=(High_limit+Low_limit)/2;

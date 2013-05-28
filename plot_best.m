@@ -2,23 +2,24 @@
 %load('retry_1103.mat');
 %load('more_pars_1103_59.mat');
 
-%global A;
-%A = load('slac.dat');
+global A;
+A = load('slac.dat');
 
-%global PARAM;
-%param_tcav;
+global PARAM;
+param_tcav;
 
-nmin = 60;
-nmax = 2000;
+nmin = 1;
+nmax = 1000;
 
 nOut = 3;
-savE = 1;
+savE = 0;
 
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,59);
 
 [a,b] = min(residual(1:nmax));
-pCurrent = params(:,b-1);
+b = 5000;
+pCurrent = params(:,b);
 
 PARAM.INIT.SIGZ0 = pCurrent(1);   % Bunch Length
 PARAM.INIT.SIGD0 = pCurrent(2);   % Initial Energy Spread
@@ -34,6 +35,26 @@ ramp             = pCurrent(11);  % Ramp Phase
 PARAM.LI20.BETA  = pCurrent(12);  % Beta Function
 PARAM.LI20.R16   = pCurrent(13);  % Dispersion
 PARAM.LI20.T166  = pCurrent(14);  % 2nd Order Dispersion
+
+PARAM.INIT.SIGZ0 = 0.0075;   % Bunch Length
+PARAM.INIT.SIGD0 = 0.0008;   % Initial Energy Spread
+PARAM.INIT.NPART = 1.95e10;   % Number of Particles
+PARAM.INIT.ASYM  = -0.15;   % Initial Gaussian Asymmetry
+PARAM.NRTL.AMPL  = 0.04000;   % Amplitude of RF Compressor
+PARAM.NRTL.PHAS  = 89.75;   % RF Compressor Phase
+PARAM.NRTL.R56   = 0.602;   % RTL Compression
+PARAM.NRTL.T566  = 1.3;   % RTL Second order compression
+decker           = -19.9;   % 2-10 Phase
+l_two            = 4;  % 11-20 Phase
+ramp             = 0;  % Ramp Phase
+PARAM.LI20.BETA  = 5;  % Beta Function
+PARAM.LI20.R16   = 94;  % Dispersion
+PARAM.LI20.T166  = 700;  % 2nd Order Dispersion
+PARAM.LI20.EHI   = 0.010;
+PARAM.LI20.ELO   = -0.020;
+
+PARAM.LI20.R56   = 0.005;  
+PARAM.LI20.T566  = 0.100;
 
 % Set dependent params
 PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)

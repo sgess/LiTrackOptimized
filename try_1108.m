@@ -1,16 +1,16 @@
 clear all;
 %load('concat_full_pyro.mat');
-%load('concat_1103.mat');
+load('concat_1111.mat');
 %load('concat_full_pyro_wide.mat');
 %load('retry_1108.mat');
 %load('retry_1103.mat');
-load('images_04_18_13.mat');
+%load('images_04_18_13.mat');
 %spec_axis = DATA.AXIS.xx/1000;
 %spec_thing = DATA.YAG.spectrum(:,59);
-%spec_axis = cat_dat.yag_ax;
-%spec_thing = cat_dat.YAG_SPEC(:,390);
-spec_axis = spec_ax;
-spec_thing = specs(:,1);
+spec_axis = cat_dat.yag_ax;
+spec_thing = cat_dat.YAG_SPEC(:,1);
+%spec_axis = spec_ax;
+%spec_thing = specs(:,1);
 
 %addpath(genpath('LiTrack'));
 fontsize = 14;
@@ -30,10 +30,10 @@ global PARAM;
 ESsteps   = 1000;
 
 % Initialize parameters
-par_lims_04_16_13;
-%par_lims_retry1108;
-param_04_16_13;
-%param_tcav;
+%par_lims_04_16_13;
+par_lims_retry1108;
+%param_04_16_13;
+param_tcav;
 
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps); 
@@ -41,6 +41,28 @@ pscaled = zeros(nPar,ESsteps);
 use_new = 1;
 
 if use_new
+    
+    if 1
+        
+        PARAM.INIT.SIGZ0 = 0.0075;   % Bunch Length
+        PARAM.INIT.SIGD0 = 0.0008;   % Initial Energy Spread
+        PARAM.INIT.NPART = 2e10;   % Number of Particles
+        PARAM.INIT.ASYM  = -0.15;   % Initial Gaussian Asymmetry
+        PARAM.NRTL.AMPL  = 0.040;   % Amplitude of RF Compressor
+        PARAM.NRTL.PHAS  = 89.85;   % RF Compressor Phase
+        PARAM.NRTL.R56   = 0.60;   % RTL Compression
+        PARAM.NRTL.T566  = 1.1;   % RTL Second order compression
+        decker           = -20;   % 2-10 Phase
+        l_two            = 0;  % 11-20 Phase
+        ramp             = 0;  % Ramp Phase
+        PARAM.LI20.BETA  = 5;  % Beta Function
+        PARAM.LI20.R16   = 105;  % Dispersion
+        PARAM.LI20.T166  = 1200;  % 2nd Order Dispersion
+        PARAM.LI20.EHI   = 0.010;
+        
+        PARAM.LI20.R56   = 0.005;
+        PARAM.LI20.T566  = 0.100;
+    end
     
     pCurrent = zeros(nPar,1);
     pCurrent(1)  = PARAM.INIT.SIGZ0;    % Bunch Length
@@ -51,13 +73,14 @@ if use_new
     pCurrent(6)  = PARAM.NRTL.PHAS;     % RF Compressor Phase
     pCurrent(7)  = PARAM.NRTL.R56;      % RTL compression
     pCurrent(8)  = PARAM.NRTL.T566;     % RTL second order compression
-    %pCurrent(9)  = decker;              % 2-10 Phase
-    pCurrent(9)  = -27;
+    pCurrent(9)  = decker;              % 2-10 Phase
     pCurrent(10) = l_two;              % 11-20 Phase
     pCurrent(11) = ramp;                % Ramp Phase
     pCurrent(12) = PARAM.LI20.BETA;     % Beta Function
     pCurrent(13) = PARAM.LI20.R16;      % Dispersion
     pCurrent(14) = PARAM.LI20.T166;     % 2nd Order Dispersion
+
+    
     
     PARAM.LONE.PHAS = decker+ramp;  % Total PhasepCurrent(14)
     PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
@@ -96,10 +119,11 @@ pInit = pCurrent;
     
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
-alpha     = 500;               % ES parameter
-gain      = 10*1600e-10;        % ES parameter
+alpha     = 500;                % ES parameter
+gain      = 2e-8;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
+I_peak    = zeros(1,ESsteps);
 residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
 
 
@@ -147,7 +171,7 @@ while j <= ESsteps
     
     % Calculate particle fraction
     Part_frac(j+1) = 1 - OUT.I.PART(nOut)/PARAM.INIT.NESIM;
-    
+    I_peak(j+1) = OUT.I.PEAK(nOut);
     % Interpolate simulated spectrum
     SimDisp = interpSimX(OUT,line_x,PARAM.SIMU.BIN,center-x_avg);
     SumX = sum(SimDisp);
@@ -166,6 +190,7 @@ while j <= ESsteps
     %residual(j+1) = sum((ProfXLi - Line_minBG).^2);
 
     % Set Cost as the value of the residual + particle fraction
+    %cost(j+1) = residual(j+1)+1000000/OUT.I.PEAK(3);
     cost(j+1) = residual(j+1);
     
     % ES Calc
@@ -227,9 +252,9 @@ while j <= ESsteps
             title('Residual','fontsize',10);
             
             subplot(2,2,3);
-            plot(1:ESsteps,1-Part_frac,'color','g','linewidth',2);
+            plot(1:ESsteps,I_peak,'color','g','linewidth',2);
             part_plot = get(gca,'Children');
-            axis([0 ESsteps 0.75 1.1]);
+            %axis([0 ESsteps 0.75 1.1]);
             xlabel('Step','fontsize',12);
             title('Particle Fraction','fontsize',10);
 
@@ -249,7 +274,7 @@ while j <= ESsteps
             %axis(h1,new_ax);
             
             set(res_plot,'YData',residual);
-            set(part_plot,'YData',1-Part_frac);
+            set(part_plot,'YData',I_peak);
             set(prof_plot,'XData',zzLi,'YData',ProfZLi);
             pause(0.0001);
             
