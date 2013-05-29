@@ -1,7 +1,8 @@
 clear all;
 %load('concat_1111.mat');
 %load('concat_1103.mat');
-load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
+%load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
+load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,1);
 spec_axis = data.YAG.axis;
@@ -19,6 +20,8 @@ global PARAM;
 
 %param_tcav;
 param_04_16_13;
+PARAM.LI20.T566 = 0.1;
+PARAM.LI20.R16 = 90;
 
 pars_init = [0.0066;        0.0008;         2.0e10;       -0.15];
 sens_init = [0.2;           0.2;            0.1;           0.3];
@@ -36,9 +39,13 @@ pars_ltwo = [1];
 sens_ltwo = [1];
 name_ltwo = {'LTWO PHAS'};
 
-pars_li20 = [1;             95;             -100;        0.030;   -0.030;];
-sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
-name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
+% pars_li20 = [1;             90;             -100;        0.030;   -0.030;];
+% sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
+% name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
+
+pars_li20 = [1;                     0.030;   -0.030;];
+sens_li20 = [0.5;                    0.5;     0.5];
+name_li20 = {'LI20 BETA';  'LI20 EHI'; 'LI20 ELO'};
 
 pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
 sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
@@ -56,6 +63,7 @@ pCurrent = pars;
 
 params  = zeros(nPar,ESsteps);
 pscaled = zeros(nPar,ESsteps);
+PARAM.LI20.R56 = 0.006;
 
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
@@ -119,7 +127,8 @@ while j <= ESsteps
 
     % Set Cost as the value of the residual + particle fraction
     %cost(j+1) = residual(j+1)+1000000/OUT.I.PEAK(3);
-    cost(j+1) = residual(j+1);
+    cost(j+1) = 1e4*(20 - OUT.I.PEAK(3));
+    %cost(j+1) = residual(j+1);
     
     % ES Calc
     pLast = 2*(pCurrent-Cent)./Diff;
