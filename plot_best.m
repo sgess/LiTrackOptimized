@@ -94,14 +94,14 @@ end
 % nPar = length(pars);
 % [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
 
-%[a,b] = min(residual(1:nmax));
-[a,b] = max(I_peak);
-b = 322;
-pCurrent = params(:,b+1);
+[a,b] = min(residual(1:nmax));
+%[a,b] = max(I_peak);
+%b = 322;
+pCurrent = params(:,b-1);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-PARAM.LI20.T166  = -0.5;
+%PARAM.LI20.T166  = -0.5;
 %PARAM.NRTL.AMPL = 0.0398;
 %PARAM.LONE.PHAS = -24;
 %PARAM.LI20.R56 = 0.005;

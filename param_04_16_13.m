@@ -23,7 +23,7 @@ PARAM.INIT.TAIL  = 0;       % Not sure what this is
 PARAM.INIT.CUT   = 6;       % Not sure what this is
 
 % NRTL bunch compressor
-PARAM.NRTL.AMPL  = 0.037;   % RTL compressor ampl (MV)
+PARAM.NRTL.AMPL  = 0.040;   % RTL compressor ampl (MV)
 PARAM.NRTL.PHAS  = 90.00;   % RTL compressor phase (deg)
 PARAM.NRTL.LEFF  = 2.1694;  % RTL cavity length (m)
 PARAM.NRTL.R56   = 0.6026;  % RTL chicane R56 (m)
@@ -34,7 +34,7 @@ PARAM.NRTL.EHI   = 0.0300;  % RTL upper momentum cut (GeV)
 % LI02-LI10 acceleration
 PARAM.LONE.LEFF  = 809.5;   % Length of LI02-LI10 (m)
 PARAM.LONE.CHRP  = 3.0536;  % chirp in 2-10 (GeV)
-decker           = -20.00;  % Chirping phase
+decker           = -22.00;  % Chirping phase
 ramp             = 0.00;   % Ramped phase
 PARAM.LONE.PHAS = decker+ramp; % Total phase
 PARAM.LONE.FBAM  = 0.235;   % feedback amplitude at S10 (GV)
@@ -62,7 +62,7 @@ PARAM.LI20.T566  = 0.100;   % Sector 20 chicane T566 (m) % = 100 mm for R56 = 5m
 PARAM.LI20.ISR   = 0.8E-5;  % ISR energy spread from bends
 PARAM.LI20.ELO   = -0.035;  % RTL lower momentum cut (GeV)
 PARAM.LI20.EHI   = 0.035;   % RTL upper momentum cut (GeV)
-PARAM.LI20.R16   = 115;     % Dispersion at YAG
+PARAM.LI20.R16   = 90;     % Dispersion at YAG
 PARAM.LI20.T166  = 0.00;    % Second order dispersion at YAG
-PARAM.LI20.BETA  = 5.0;     % Beta function at YAG
-PARAM.LI20.EMIT  = 150e-6;  % Emittance in S20
+PARAM.LI20.BETA  = 1.0;     % Beta function at YAG
+PARAM.LI20.EMIT  = 100e-6;  % Emittance in S20
