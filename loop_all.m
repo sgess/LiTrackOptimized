@@ -51,7 +51,7 @@ pscaled = zeros(nPar,ESsteps);
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;                % ES parameter
-gain      = 4.5e-5;               % ES parameter
+gain      = 1.0e-5;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 
@@ -64,6 +64,9 @@ line_x = data.YAG.axis;
 x_avg = mean(line_x);
 specs = data.YAG.spectra(:,data.YAG.good_shot);
 n_shots = sum(data.YAG.good_shot);
+profile = zeros(130,n_shots);
+prof_ax = zeros(130,n_shots);
+match_spec = zeros(760,n_shots);
 
 for i = 1:n_shots
     
@@ -73,19 +76,26 @@ for i = 1:n_shots
     [MaxLine,max_ind] = max(Line_minBG);
     SumLine = sum(Line_minBG);
     center = sum(line_x.*Line_minBG)/sum(Line_minBG);
-    I_peak    = zeros(1,ESsteps);
-    residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
     
-    pInit = pCurrent;
     
+    if i~=1 && residual(j) > 1e5
+        pNow = pInit;
+        pCurrent = pInit;
+    else
+        pNow = pCurrent;
+    end
+    SetPars(pCurrent, name, nPar);
     params  = zeros(nPar,ESsteps);
     pscaled = zeros(nPar,ESsteps);
+    
+    I_peak    = zeros(1,ESsteps);
+    residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
     
     j = 0;
     
     while j <= ESsteps
         
-        display(['Shot ' num2str(i) 'ESstep ' num2str(j)]);
+        display(['Shot ' num2str(i) ' ESstep ' num2str(j)]);
         
         %%%%%%%%%%%%%%%%%%%%
         % Simulation Stuff %
@@ -114,12 +124,7 @@ for i = 1:n_shots
         %residual(j+1) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
         residual(j+1) = sum((ProfXLi - Line_minBG).^2);
         
-        if residual(j+1) < 2e4
-            shot_par(i) = PARAM;
-            ress(i) = residual(j+1);
-            ipk(i) = I_peak(j+1);
-            break;
-        end
+
         
         % Set Cost as the value of the residual + particle fraction
         %cost(j+1) = residual(j+1)+1000000/OUT.I.PEAK(3);
@@ -132,6 +137,50 @@ for i = 1:n_shots
         pNext(pNext < -1) = -1;
         pNext(pNext >  1) =  1;
         pCurrent = Diff.*pNext'/2+Cent;
+ 
+        if residual(j+1) < 2.5e4
+            shot_par(i) = PARAM;
+            ress(i) = residual(j+1);
+            ipk(i) = I_peak(j+1);
+            profile(:,i) = ProfZLi;
+            prof_ax(:,i) = zzLi;
+            match_spec(:,i) = ProfXLi;
+            j = 1;
+            break;
+        end
+        
+        if j==499
+            
+            [r,b] = min(residual);
+            if b == 1
+                SetPars(pNow,name, nPar);
+            else
+                SetPars(params(:,b-1),name, nPar);
+            end
+            OUT = LiTrackOpt('FACETpar');
+            % Interpolate simulated spectrum
+            SimDisp = interpSimX(OUT,line_x,PARAM.SIMU.BIN,center-x_avg);
+            SumX    = sum(SimDisp);
+            normX   = SumLine/SumX;
+            ProfXLi = normX*SimDisp;
+            [MaxSim,sim_ind] = max(ProfXLi);
+            
+            % Get bunch profile
+            dZ      = OUT.Z.AXIS(2,nOut) - OUT.Z.AXIS(1,nOut);
+            zzLi    = [OUT.Z.AXIS(1,nOut)-dZ; OUT.Z.AXIS(:,nOut); OUT.Z.AXIS(end,nOut)+dZ];
+            ProfZLi = [0; OUT.Z.HIST(:,nOut); 0];
+            
+            % Calculate residual
+            %residual(j+1) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
+            r = sum((ProfXLi - Line_minBG).^2);
+            shot_par(i) = PARAM;
+            ress(i) = r;
+            ipk(i) = OUT.I.PEAK(nOut);
+            profile(:,i) = ProfZLi;
+            prof_ax(:,i) = zzLi;
+            match_spec(:,i) = ProfXLi;
+            break;
+        end
         
         % Update Params
         SetPars(pCurrent, name, nPar);
@@ -140,6 +189,7 @@ for i = 1:n_shots
         params(:,j+1)  = pCurrent;
         pscaled(:,j+1) = pNext;
         
+
         
         
         if show
@@ -190,14 +240,5 @@ for i = 1:n_shots
         j = j + 1;
         
     end
-    [r,b] = min(residual);       
-    if b == 1
-        SetPars(pInit,name, nPar);
-        ipk(i) = I_peak(1);
-    else
-        SetPars(params(:,b-1),name, nPar);
-        ipk(i) = I_peak(b-1);
-    end
-    shot_par(i) = PARAM;
-    ress(i) = r;
+    
 end
