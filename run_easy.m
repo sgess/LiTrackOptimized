@@ -2,13 +2,13 @@ clear all;
 %load('concat_1111.mat');
 %load('concat_1103.mat');
 %load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
-%load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
-load('/Users/sgess/Desktop/data/2013/slims/slim_10915.mat');
+load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+%load('/Users/sgess/Desktop/data/2013/slims/slim_10915.mat');
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,1);
 spec_axis = data.YAG.axis;
 %spec_thing = data.YAG.spectra(:,1);
-spec_thing = mean(data.YAG.spectra,2);
+spec_thing = data.YAG.spectra(:,144);
 %spec_thing = mean(cat_dat.YAG_SPEC,2);
 show = 1;
 nOut = 3;
@@ -22,15 +22,15 @@ global PARAM;
 
 %param_tcav;
 param_04_16_13;
-PARAM.LI20.R16   = 87;
-PARAM.LI20.BETA  = 1.0;
+PARAM.LI20.R16   = 85;
+PARAM.LI20.BETA  = 4.0;
 PARAM.LI20.T166  = 0;
 
-pars_init = [0.0066;        0.0008;         2.1e10;       -0.15];
+pars_init = [0.0068;        0.0008;         2.1e10;       -0.15];
 sens_init = [0.2;           0.2;            0.1;           0.3];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0409;        90.00;         0.602;       1.3];
+pars_nrtl = [0.0400;        90.30;         0.602;       1.3];
 sens_nrtl = [0.06;           0.01;            0.02;       0.1];
 name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 
@@ -42,25 +42,29 @@ name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 % sens_nrtl = [0.06;           0.01];
 % name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
-pars_lone = [-22.0];
+pars_lone = [-21.6];
 sens_lone = [0.3];
 name_lone = {'LONE PHAS'};
 
-%pars_ltwo = [1];
-%sens_ltwo = [1];
-%name_ltwo = {'LTWO PHAS'};
+pars_ltwo = [-5];
+sens_ltwo = [1];
+name_ltwo = {'LTWO PHAS'};
 
-% pars_li20 = [1;             90;             -100;        0.030;   -0.030;];
+% pars_li20 = [4;             90;             -100;        0.030;   -0.030;];
 % sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
 % name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
 
-%pars_li20 = [1;                     0.030;   -0.030;];
-%sens_li20 = [0.5;                    0.5;     0.5];
-%name_li20 = {'LI20 BETA';  'LI20 EHI'; 'LI20 ELO'};
+% pars_li20 = [-100;                     0.030;   -0.030;];
+% sens_li20 = [1;                    0.5;     0.5];
+% name_li20 = {'LI20 T166';  'LI20 EHI'; 'LI20 ELO'};
 
-pars = [pars_init; pars_nrtl; pars_lone];
-sens = [sens_init; sens_nrtl; sens_lone];
-name = [name_init; name_nrtl; name_lone];
+%pars = [pars_init; pars_nrtl; pars_lone];
+%sens = [sens_init; sens_nrtl; sens_lone];
+%name = [name_init; name_nrtl; name_lone];
+
+pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
+sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
+name = [name_init; name_nrtl; name_lone; name_ltwo];
 
 %pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
 %sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
@@ -91,8 +95,6 @@ residual  = zeros(1,ESsteps);   % Chi2 difference between spectra
 if show; figure(1); end;
 
 j = 0;
-k = 0;
-
 
 % Calculate axes
 xx = spec_axis;

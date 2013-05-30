@@ -101,11 +101,11 @@ pCurrent = params(:,b-1);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-PARAM.LI20.T166  = 0;
+%PARAM.LTWO.PHAS = 0;
 %PARAM.NRTL.AMPL = 0.0398;
 %PARAM.LONE.PHAS = -24;
 %PARAM.LI20.R56 = 0.005;
-%PARAM.LI20.T566 = 0.1;
+%PARAM.LI20.T166 = -200;
 
 OUT = LiTrackOpt('FACETpar');
 OUT.I.PEAK(3)
