@@ -18,16 +18,16 @@ PARAM.INIT.Z0BAR = 0;       % Z offset
 PARAM.INIT.D0BAR = 0;       % Energy offset
 PARAM.INIT.NESIM = 2E5;     % Number of simulated macro particles
 PARAM.INIT.NPART = 2.00E10; % Number of electrons per bunch
-PARAM.INIT.ASYM  = -0.180;  % The Holtzapple skew
+PARAM.INIT.ASYM  = -0.200;  % The Holtzapple skew
 PARAM.INIT.TAIL  = 0;       % Not sure what this is
 PARAM.INIT.CUT   = 6;       % Not sure what this is
 
 % NRTL bunch compressor
-PARAM.NRTL.AMPL  = 0.040;   % RTL compressor ampl (MV)
+PARAM.NRTL.AMPL  = 0.0405;  % RTL compressor ampl (MV)
 PARAM.NRTL.PHAS  = 90.00;   % RTL compressor phase (deg)
 PARAM.NRTL.LEFF  = 2.1694;  % RTL cavity length (m)
 PARAM.NRTL.R56   = 0.6026;  % RTL chicane R56 (m)
-PARAM.NRTL.T566  = 1.000;   % RTL chicane T566 (m)
+PARAM.NRTL.T566  = 1.200;   % RTL chicane T566 (m)
 PARAM.NRTL.ELO   = -0.0300; % RTL lower momentum cut (GeV)
 PARAM.NRTL.EHI   = 0.0300;  % RTL upper momentum cut (GeV)
 
@@ -62,7 +62,7 @@ PARAM.LI20.T566  = 0.100;   % Sector 20 chicane T566 (m) % = 100 mm for R56 = 5m
 PARAM.LI20.ISR   = 0.8E-5;  % ISR energy spread from bends
 PARAM.LI20.ELO   = -0.035;  % RTL lower momentum cut (GeV)
 PARAM.LI20.EHI   = 0.035;   % RTL upper momentum cut (GeV)
-PARAM.LI20.R16   = 90;     % Dispersion at YAG
+PARAM.LI20.R16   = 85;      % Dispersion at YAG
 PARAM.LI20.T166  = 0.00;    % Second order dispersion at YAG
 PARAM.LI20.BETA  = 1.0;     % Beta function at YAG
 PARAM.LI20.EMIT  = 100e-6;  % Emittance in S20

@@ -2,7 +2,8 @@ clear all;
 %load('concat_1111.mat');
 %load('concat_1103.mat');
 %load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
-load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+%load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+load('/Users/sgess/Desktop/data/2013/slims/slim_10915.mat');
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,1);
 spec_axis = data.YAG.axis;
@@ -21,11 +22,11 @@ global PARAM;
 
 %param_tcav;
 param_04_16_13;
-PARAM.LI20.T566 = 0.1;
-PARAM.LI20.R16 = 85;
-PARAM.LI20.R56 = 0.005;
+PARAM.LI20.R16   = 87;
+PARAM.LI20.BETA  = 1.0;
+PARAM.LI20.T166  = 0;
 
-pars_init = [0.0066;        0.0008;         2.0e10;       -0.15];
+pars_init = [0.0066;        0.0008;         2.1e10;       -0.15];
 sens_init = [0.2;           0.2;            0.1;           0.3];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
@@ -33,7 +34,15 @@ pars_nrtl = [0.0409;        90.00;         0.602;       1.3];
 sens_nrtl = [0.06;           0.01;            0.02;       0.1];
 name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 
-pars_lone = [-21.5];
+% pars_init = [0.0066;        2.0e10];
+% sens_init = [0.2;               0.1];
+% name_init = {'INIT SIGZ0'; 'INIT NPART'};
+% 
+% pars_nrtl = [0.0405;        90.00];
+% sens_nrtl = [0.06;           0.01];
+% name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
+
+pars_lone = [-22.0];
 sens_lone = [0.3];
 name_lone = {'LONE PHAS'};
 
@@ -72,8 +81,8 @@ pscaled = zeros(nPar,ESsteps);
 
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
-alpha     = 1000;                % ES parameter
-gain      = 1.5e-5;               % ES parameter
+alpha     = 500;                % ES parameter
+gain      = 4.5e-5;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 I_peak    = zeros(1,ESsteps);

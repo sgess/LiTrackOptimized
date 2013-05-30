@@ -101,7 +101,7 @@ pCurrent = params(:,b-1);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-%PARAM.LI20.T166  = -0.5;
+PARAM.LI20.T166  = 0;
 %PARAM.NRTL.AMPL = 0.0398;
 %PARAM.LONE.PHAS = -24;
 %PARAM.LI20.R56 = 0.005;
