@@ -1,6 +1,6 @@
 clear all;
 
-show = 0;
+show = 1;
 nOut = 3;
 
 global A;
@@ -14,14 +14,16 @@ param_04_16_13;
 PARAM.LI20.R16   = 85;
 PARAM.LI20.BETA  = 4.0;
 PARAM.LI20.T166  = 0;
+PARAM.NRTL.R56 = 0.603;
+PARAM.NRTL.T566 = 1.3;
 
 pars_init = [0.0068;        0.0008;         2.1e10;       -0.15];
 sens_init = [0.2;           0.2;            0.1;           0.3];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0400;        90.30;         0.602;       1.3];
-sens_nrtl = [0.06;           0.01;            0.02;       0.1];
-name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
+pars_nrtl = [0.0400;        90.00];
+sens_nrtl = [0.06;           0.01];
+name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
 pars_lone = [-21.6];
 sens_lone = [0.3];
@@ -36,7 +38,7 @@ sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
 name = [name_init; name_nrtl; name_lone; name_ltwo];
 
 % Set number of sim steps
-ESsteps   = 500;
+ESsteps   = 400;
 
 nPar = length(pars);
 [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
