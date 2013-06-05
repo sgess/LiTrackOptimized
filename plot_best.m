@@ -55,22 +55,48 @@ pCurrent = params(:,b-1);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-PARAM.SIMU.BIN = 256;
-PARAM.INIT.NPART = 2.02e10;
-PARAM.INIT.SIGZ0 = 0.00703;
-PARAM.NRTL.AMPL = 0.03992;
-PARAM.NRTL.PHAS = 90.32;
-PARAM.NRTL.R56  = 0.6085;
-PARAM.NRTL.T566  = 1.325;
-PARAM.LONE.PHAS = -20.20;
-PARAM.LTWO.PHAS = -3.5;
-% PARAM.LI20.EHI = 0.0285;
-% PARAM.LI20.R16 = 94;
+PARAM.LONE.RAMP = 0;
+PARAM.LONE.DECK = -20.8;
+PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
+PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
+PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+% PARAM.SIMU.BIN = 256;
+PARAM.INIT.NPART = 2.25e10;
+PARAM.INIT.SIGZ0 = 0.0066;
+PARAM.NRTL.AMPL = 0.0404;
+PARAM.NRTL.PHAS = 90.4;
+% PARAM.NRTL.R56  = 0.6085;
+% PARAM.NRTL.T566  = 1.325;
+% PARAM.LONE.PHAS = -20.20;
+% PARAM.LTWO.PHAS = -3.5;
+% % PARAM.LI20.EHI = 0.0285;
+%PARAM.LI20.R16 = 90;
 PARAM.LI20.T166 = 0;
-% PARAM.LI20.BETA = 4;
+% % PARAM.LI20.BETA = 4;
+ip = zeros(11);
+r56 = 0.004:0.0002:0.006;
+t566 = -.200:.040:.200;
+%r56 = linspace(0.0052,0.0056,11);
+%t566 = linspace(-0.06,-0.02,11);
+% for i=1:11;
+%     for j=1:11;
+% PARAM.LI20.R56 = r56(i);
+% PARAM.LI20.T566 = t566(j);
+% 
+% OUT = LiTrackOpt('FACETpar');
+% ip(i,j) = OUT.I.PEAK(3);
+% 
+%     end
+% end
+
+%PARAM.LI20.R56 = 0.0060;
+%PARAM.LI20.T566 = 0.1200;
+%PARAM.LI20.T166 = 0;
 
 OUT = LiTrackOpt('FACETpar');
-ip = OUT.I.PEAK(3)
+ip = OUT.I.PEAK(3);
+
 xx = spec_axis;
 Lineout = spec_thing;
 
@@ -86,8 +112,18 @@ SumX = sum(SimDisp);
 normX = SumLine/SumX;
 ProfXLi = normX*SimDisp;
 
+dZ = OUT.Z.AXIS(2,nOut) - OUT.Z.AXIS(1,nOut);
+zzLi = [OUT.Z.AXIS(1,nOut)-dZ; OUT.Z.AXIS(:,nOut); OUT.Z.AXIS(end,nOut)+dZ];
+ProfZLi = [0; OUT.Z.HIST(:,nOut); 0];
+
+dE = OUT.E.AXIS(2,nOut) - OUT.E.AXIS(1,nOut);
+eeLi = [OUT.E.AXIS(1,nOut)-dE; OUT.E.AXIS(:,nOut); OUT.E.AXIS(end,nOut)+dE];
+ProfELi = [0; OUT.E.HIST(:,nOut); 0];
+zd = hist2(OUT.Z.DIST(1:OUT.I.PART(nOut),nOut),OUT.E.DIST(1:OUT.I.PART(nOut),nOut),zzLi/1000,eeLi/100);
+
 resi = sum((ProfXLi - Line_minBG).^2);
 parts = PARAM.INIT.NPART*OUT.I.PART(3)/PARAM.INIT.NESIM;
+if ~exist('res_low','var'); res_low = 1e10; end;
 if resi < res_low; res_low = resi; end;
 
 figure(2);
@@ -97,7 +133,7 @@ legend('sYAG','LiTrack');
 if savE; saveas(gca,'~/Desktop/matched_spec_fullest_pyro.png');end;
 
 figure(3);
-plot(OUT.Z.AXIS(:,nOut),OUT.Z.HIST(:,nOut),'r','linewidth',2);
+plot(zzLi,ProfZLi,'r','linewidth',2);
 xlabel('Z (mm)');
 a = axis;
 text(a(2)*.6,a(4)*.8,num2str(ip,'%0.2f'),'fontsize',16);
@@ -105,3 +141,17 @@ text(a(2)*.6,a(4)*.7,num2str(parts,'%0.2e'),'fontsize',16);
 text(a(2)*.6,a(4)*.6,num2str(resi,'%0.1f'),'fontsize',16);
 text(a(2)*.6,a(4)*.5,num2str(res_low,'%0.1f'),'fontsize',16);
 if savE; saveas(gca,'~/Desktop/bunch_prof_fullest_pyro.png');end;
+
+figure(4);
+imagesc(1000*zzLi,eeLi,flipud(rot90(zd,1)));
+xlabel('Z (\mum)','fontsize',14);
+ylabel('\delta (%)','fontsize',14);
+set(gca,'YDir','normal');
+
+% figure(5);
+% plot(eeLi,ProfELi,'g','linewidth',2);
+% xlabel('\delta (%)');
+% 
+% figure(6);
+% plot(line_x,ProfXLi,'g','linewidth',2);
+% xlabel('X (mm)');

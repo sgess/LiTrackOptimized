@@ -18,6 +18,10 @@ if nargin < 3
     lo_lims = (pars > 0).*lo_abs - (pars < 0).*hi_abs;
     hi_lims = (pars > 0).*hi_abs - (pars < 0).*lo_abs;
     
+    tf = frac < 0;
+    lo_lims(tf) = frac(tf);
+    hi_lims(tf) = -frac(tf);
+    
 else
     
     tf = sum(lo_lims > hi_lims);

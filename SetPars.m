@@ -31,6 +31,8 @@ PARAMETERS = {'PLOT';
               'CUT';
               'AMPL';
               'PHAS';
+              'RAMP';
+              'DECK';
               'LEFF';
               'R56';
               'T566';
@@ -69,5 +71,7 @@ for i = 1:nPar
     end
 end
 
+PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
+PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
 PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
 PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain

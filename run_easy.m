@@ -1,8 +1,8 @@
 clear all;
 %load('concat_1111.mat');
 %load('concat_1103.mat');
-load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
-%load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+%load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
+load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 %load('/Users/sgess/Desktop/data/2013/slims/slim_10915.mat');
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,1);
@@ -19,26 +19,15 @@ A = load('slac.dat');
 
 %Create Parameter struct
 global PARAM;
-
 param_04_16_13;
-PARAM.INIT.NPART = 2.05e10;
-PARAM.INIT.SIGZ0 = 0.00710;
-PARAM.NRTL.AMPL = 0.04040;
-PARAM.NRTL.PHAS = 90.10;
-PARAM.NRTL.R56  = 0.6026;
-PARAM.NRTL.T566  = 1.305;
-PARAM.LONE.PHAS = -20.25;
-PARAM.LTWO.PHAS = -3.0;
-PARAM.LI20.EHI = 0.0285;
-PARAM.LI20.R16 = 94;
-PARAM.LI20.T166 = 50;
+PARAM.LI20.R16 = 80;
 
 pars_init = [0.0071;        0.00084;         2.05e10;       -0.147];
-sens_init = [0.05;           0.05;            0.05;           0.05];
+sens_init = [0.10;          0.05;            0.08;           0.05];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0404;        90.12;         0.6026;       1.305];
-sens_nrtl = [0.05;           0.05;            0.05;       0.05];
+pars_nrtl = [0.0395;        90.12;         0.6026;       1.053];
+sens_nrtl = [0.03;          0.005;           0.03;       0.300];
 name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 
 % pars_init = [0.0066;        2.1e10];
@@ -49,36 +38,44 @@ name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 % sens_nrtl = [0.06;           0.01];
 % name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
-pars_lone = [-20.25];
-sens_lone = [0.05];
-name_lone = {'LONE PHAS'};
+pars_lone = [-20.3;              0];
+sens_lone = [0.03;              -5];
+name_lone = {'LONE DECK'; 'LONE RAMP'};
 
-pars_ltwo = [-3.0];
-sens_ltwo = [0.05];
-name_ltwo = {'LTWO PHAS'};
+%pars_ltwo = [0.0];
+%sens_ltwo = [-5];
+%name_ltwo = {'LTWO PHAS'};
 % 
-%pars_li20 = [4;             84;             -100;        0.030;   -0.030;];
-%sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
-%name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
+% pars_li20 = [4;             84;             -100;        0.030;   -0.030];
+% sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
+% name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
 % 
- pars_li20 = [50;               0.0285];
- sens_li20 = [0.05;               0.05];
- name_li20 = {'LI20 T166';  'LI20 EHI';};
+% pars_li20 = [0;               0.0285];
+% sens_li20 = [-200;              0.05];
+% name_li20 = {'LI20 T166';  'LI20 EHI'};
 
-%pars = [pars_init; pars_nrtl; pars_lone];
-%sens = [sens_init; sens_nrtl; sens_lone];
-%name = [name_init; name_nrtl; name_lone];
+%pars_li20 = [0.005;           0.1];
+%sens_li20 = [.1;              -0.2];
+%name_li20 = {'LI20 R56';  'LI20 T566'}; 
+ 
+pars = [pars_init; pars_nrtl; pars_lone];
+sens = [sens_init; sens_nrtl; sens_lone];
+name = [name_init; name_nrtl; name_lone];
 
-%pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
-%sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
-%name = [name_init; name_nrtl; name_lone; name_ltwo];
+% pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
+% sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
+% name = [name_init; name_nrtl; name_lone; name_ltwo];
 
-pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
-sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
-name = [name_init; name_nrtl; name_lone; name_ltwo; name_li20];
+% pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
+% sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
+% name = [name_init; name_nrtl; name_lone; name_ltwo; name_li20];
+
+%pars = pars_li20;
+%sens = sens_li20;
+%name = name_li20;
 
 % Set number of sim steps
-ESsteps   = 500;
+ESsteps   = 2000;
 
 nPar = length(pars);
 [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
@@ -92,8 +89,8 @@ pscaled = zeros(nPar,ESsteps);
 
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
-alpha     = 1000;                % ES parameter
-gain      = 4.5e-6;               % ES parameter
+alpha     = 200;                % ES parameter
+gain      = 4.5e-7;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 I_peak    = zeros(1,ESsteps);
