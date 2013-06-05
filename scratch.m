@@ -126,3 +126,11 @@ ylabel('Z (mm)','fontsize',14);
 xlabel('I_{peak}','fontsize',14);
 %%
 
+% assuming x and y are correlated variables . . .
+x = randn(10000,1);
+y = 2*randn(10000,1);
+xx = -5:0.2:5;
+yy = -10:0.2:10;
+
+dist = hist2(x,y,xx,yy);
+imagesc(xx,yy,dist);
