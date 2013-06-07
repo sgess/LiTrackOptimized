@@ -75,7 +75,7 @@ name = [name_init; name_nrtl; name_lone];
 %name = name_li20;
 
 % Set number of sim steps
-ESsteps   = 2000;
+ESsteps   = 100;
 
 nPar = length(pars);
 [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
