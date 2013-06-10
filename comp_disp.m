@@ -19,7 +19,7 @@ load('~/Desktop/this_scan.mat');
 % end
 
 
-
+savE = 1;
 
 
 
@@ -56,11 +56,53 @@ res100 = sum((new(i100,:) - cm).^2,2);
 [a100,b100] = min(res100);
 bi100 = b100+4*3125;
 
+bInds = [bi80 bi85 bi90 bi95 bi100];
+
 figure(1);
 plot(xx,cs,'k','linewidth',3);
 hold on;
 plot(xx,new(bi80,:),'bs',xx,new(bi85,:),'gv',xx,new(bi90,:),'rd',xx,new(bi95,:),'co',xx,new(bi100,:),'m^');
 xlabel('X (mm)','fontsize',14);
 legend('YAG','\eta = 80 mm','\eta = 85 mm','\eta = 90 mm','\eta = 95 mm','\eta = 100 mm');
+if savE; saveas(gca,'~/Desktop/plots/disp_test/spectra.pdf'); end;
 
 
+figure(2);
+plot(unique(r_16),1000*ampl([bi80 bi85 bi90 bi95 bi100]),'*--','linewidth',2);
+xlabel('\eta (mm)','fontsize',14);
+ylabel('Compressor Amplitude (MV)','fontsize',14);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/nrtl_ampl.pdf'); end;
+
+figure(3);
+plot(unique(r_16),deck([bi80 bi85 bi90 bi95 bi100]),'*--','linewidth',2);
+xlabel('\eta (mm)','fontsize',14);
+ylabel('2-10 Phase (deg)','fontsize',14);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/deck_phas.pdf'); end;
+
+figure(4);
+plot(unique(r_16),phas([bi80 bi85 bi90 bi95 bi100]),'*--','linewidth',2);
+xlabel('\eta (mm)','fontsize',14);
+ylabel('Compressor Phase (deg)','fontsize',14);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/comp_phas.pdf'); end;
+
+figure(5);
+plot(unique(r_16),1000*sigz([bi80 bi85 bi90 bi95 bi100]),'*--','linewidth',2);
+xlabel('\eta (mm)','fontsize',14);
+ylabel('\sigma_z (mm)','fontsize',14);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/sigmaz.pdf'); end;
+
+figure(6);
+plot(unique(r_16),part([bi80 bi85 bi90 bi95 bi100]),'*--','linewidth',2);
+xlabel('\eta (mm)','fontsize',14);
+ylabel('Particles','fontsize',14);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/npart.pdf'); end;
+
+figure(7);
+plot(1000*zz,bl(bi80,:),'bs',1000*zz,bl(bi85,:),'gv',1000*zz,bl(bi90,:),'rd',1000*zz,bl(bi95,:),'co',1000*zz,bl(bi100,:),'m^');
+xlabel('Z (\mum)','fontsize',14);
+legend(['\eta = 80 mm, I_{max} = ' num2str(I_max(bi80),'%0.1f') ' (kA)'],...
+    ['\eta = 85 mm, I_{max} = ' num2str(I_max(bi85),'%0.1f') ' (kA)'],...
+    ['\eta = 90 mm, I_{max} = ' num2str(I_max(bi90),'%0.1f') ' (kA)'],...
+    ['\eta = 95 mm, I_{max} = ' num2str(I_max(bi95),'%0.1f') ' (kA)'],...
+    ['\eta = 100 mm, I_{max} = ' num2str(I_max(bi100),'%0.1f') ' (kA)']);
+if savE; saveas(gca,'~/Desktop/plots/disp_test/profs.pdf'); end;
