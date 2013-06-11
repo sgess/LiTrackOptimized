@@ -1,25 +1,25 @@
 clear all;
-%load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
-load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
-%load('../DATA/scans/this_scan.mat');
-load('~/Desktop/this_scan.mat');
+load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
+%load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+load('../DATA/scans/this_scan.mat');
+%load('~/Desktop/this_scan.mat');
 
 
-% dx = xx(2)-xx(1);
-% xs = repmat(xx,length(sy),1);
-% cent = sum(xs.*sy,2)./sum(sy,2);
-% off = round(cent/dx);
-% new = zeros(size(sy));
-% 
-% for i = 1:length(sy)
-%     
-%     new(i,:) = interp1(xx-cent(i),sy(i,:),xx,'linear',0);
-%     new(i,:) = new(i,:)/max(new(i,:));
-%     
-% end
+dx = xx(2)-xx(1);
+xs = repmat(xx,length(sy),1);
+cent = sum(xs.*sy,2)./sum(sy,2);
+off = round(cent/dx);
+new = zeros(size(sy));
+
+for i = 1:length(sy)
+    
+    new(i,:) = interp1(xx-cent(i),sy(i,:),xx,'linear',0);
+    new(i,:) = new(i,:)/max(new(i,:));
+    
+end
 
 
-savE = 1;
+savE = 0;
 
 
 
