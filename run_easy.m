@@ -1,8 +1,8 @@
 clear all;
 %load('concat_1111.mat');
 %load('concat_1103.mat');
-%load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
-load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
+load('../DATA/nas/nas-li20-pm01/E200/2013/20130428/E200_10794/slim.mat');
+%load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 %load('/Users/sgess/Desktop/data/2013/slims/slim_10915.mat');
 %spec_axis = cat_dat.yag_ax;
 %spec_thing = cat_dat.YAG_SPEC(:,1);
@@ -39,7 +39,7 @@ name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 % sens_nrtl = [0.06;           0.01];
 % name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
-pars_lone = [-20.3;              0];
+pars_lone = [-23.0;              0];
 sens_lone = [0.03;              -5];
 name_lone = {'LONE DECK'; 'LONE RAMP'};
 
@@ -76,7 +76,7 @@ name = [name_init; name_nrtl; name_lone; name_li20];
 %name = name_li20;
 
 % Set number of sim steps
-ESsteps   = 10000;
+ESsteps   = 200;
 
 nPar = length(pars);
 [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
