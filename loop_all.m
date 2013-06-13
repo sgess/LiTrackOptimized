@@ -11,31 +11,39 @@ global PARAM;
 
 %param_tcav;
 param_04_16_13;
-PARAM.LI20.R16   = 85;
-PARAM.LI20.BETA  = 4.0;
+PARAM.LI20.R16   = 90;
+PARAM.LI20.BETA  = 3.0;
 PARAM.LI20.T166  = 0;
 PARAM.NRTL.R56 = 0.603;
 PARAM.NRTL.T566 = 1.3;
 
-pars_init = [0.0068;        0.0008;         2.1e10;       -0.15];
+pars_init = [0.0068;        0.0008;         2.0e10;       -0.15];
 sens_init = [0.2;           0.2;            0.1;           0.3];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0400;        90.00];
+pars_nrtl = [0.0402;        90.30];
 sens_nrtl = [0.06;           0.01];
 name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
-pars_lone = [-21.6];
-sens_lone = [0.3];
-name_lone = {'LONE PHAS'};
+pars_lone = [-21.6; 0];
+sens_lone = [0.3; -5];
+name_lone = {'LONE DECK'; 'LONE RAMP'};
 
-pars_ltwo = [-5];
-sens_ltwo = [1];
-name_ltwo = {'LTWO PHAS'};
+pars_li20 = [0];
+sens_li20 = [-500];
+name_li20 = {'LI20 T166'};
 
-pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
-sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
-name = [name_init; name_nrtl; name_lone; name_ltwo];
+% pars_ltwo = [0];
+% sens_ltwo = [-5];
+% name_ltwo = {'LTWO PHAS'};
+
+pars = [pars_init; pars_nrtl; pars_lone];
+sens = [sens_init; sens_nrtl; sens_lone];
+name = [name_init; name_nrtl; name_lone];
+
+% pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
+% sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
+% name = [name_init; name_nrtl; name_lone; name_ltwo];
 
 % Set number of sim steps
 ESsteps   = 400;
@@ -53,7 +61,8 @@ pscaled = zeros(nPar,ESsteps);
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;                % ES parameter
-gain      = 1.0e-5;               % ES parameter
+%gain      = 1.0e-5;               % ES parameter
+gain      = 0.4;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 
@@ -66,8 +75,8 @@ line_x = data.YAG.axis;
 x_avg = mean(line_x);
 specs = data.YAG.spectra(:,data.YAG.good_shot);
 n_shots = sum(data.YAG.good_shot);
-profile = zeros(130,n_shots);
-prof_ax = zeros(130,n_shots);
+profile = zeros(PARAM.SIMU.BIN+2,n_shots);
+prof_ax = zeros(PARAM.SIMU.BIN+2,n_shots);
 match_spec = zeros(760,n_shots);
 
 for i = 1:n_shots
@@ -78,7 +87,7 @@ for i = 1:n_shots
     [MaxLine,max_ind] = max(Line_minBG);
     SumLine = sum(Line_minBG);
     center = sum(line_x.*Line_minBG)/sum(Line_minBG);
-    
+    Line_minBG = Line_minBG/MaxLine;
     
     if i~=1 && residual(j) > 1e5
         pNow = pInit;
@@ -116,6 +125,7 @@ for i = 1:n_shots
         normX   = SumLine/SumX;
         ProfXLi = normX*SimDisp;
         [MaxSim,sim_ind] = max(ProfXLi);
+        ProfXLi = ProfXLi/MaxSim;
         
         % Get bunch profile
         dZ      = OUT.Z.AXIS(2,nOut) - OUT.Z.AXIS(1,nOut);
@@ -140,7 +150,7 @@ for i = 1:n_shots
         pNext(pNext >  1) =  1;
         pCurrent = Diff.*pNext'/2+Cent;
  
-        if residual(j+1) < 2.5e4
+        if residual(j+1) < 1
             shot_par(i) = PARAM;
             ress(i) = residual(j+1);
             ipk(i) = I_peak(j+1);
@@ -233,7 +243,7 @@ for i = 1:n_shots
                 set(part_plot,'YData',I_peak);
                 set(prof_plot,'XData',zzLi,'YData',ProfZLi);
                 pause(0.0001);
-                
+                %pause(1);
             end
             
             

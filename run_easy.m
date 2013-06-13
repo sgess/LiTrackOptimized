@@ -8,7 +8,7 @@ load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 %spec_thing = cat_dat.YAG_SPEC(:,1);
 spec_axis = data.YAG.axis;
 %spec_thing = data.YAG.spectra(:,1);
-spec_thing = data.YAG.spectra(:,144);
+spec_thing = data.YAG.spectra(:,1);
 %spec_thing = mean(cat_dat.YAG_SPEC,2);
 show = 1;
 nOut = 3;
@@ -20,13 +20,14 @@ A = load('slac.dat');
 %Create Parameter struct
 global PARAM;
 param_04_16_13;
-PARAM.LI20.R16 = 80;
+PARAM.LI20.R16 = 90;
+PARAM.LI20.BETA = 3;
 
-pars_init = [0.0071;        0.00084;         2.05e10;       -0.147];
+pars_init = [0.0068;        0.00084;         2.05e10;       -0.147];
 sens_init = [0.10;          0.05;            0.08;           0.05];
 name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0395;        90.12;         0.6026;       1.053];
+pars_nrtl = [0.0395;        90.3;         0.6026;       1.053];
 sens_nrtl = [0.03;          0.005;           0.03;       0.300];
 name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 
@@ -50,17 +51,17 @@ name_lone = {'LONE DECK'; 'LONE RAMP'};
 % sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
 % name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
 % 
-% pars_li20 = [0;               0.0285];
-% sens_li20 = [-200;              0.05];
-% name_li20 = {'LI20 T166';  'LI20 EHI'};
+pars_li20 = [90; 0;               ];
+sens_li20 = [0.05; -500;              ];
+name_li20 = {'LI20 R16'; 'LI20 T166';};
 
 %pars_li20 = [0.005;           0.1];
 %sens_li20 = [.1;              -0.2];
 %name_li20 = {'LI20 R56';  'LI20 T566'}; 
  
-pars = [pars_init; pars_nrtl; pars_lone];
-sens = [sens_init; sens_nrtl; sens_lone];
-name = [name_init; name_nrtl; name_lone];
+pars = [pars_init; pars_nrtl; pars_lone; pars_li20];
+sens = [sens_init; sens_nrtl; sens_lone; sens_li20];
+name = [name_init; name_nrtl; name_lone; name_li20];
 
 % pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo];
 % sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo];
@@ -75,7 +76,7 @@ name = [name_init; name_nrtl; name_lone];
 %name = name_li20;
 
 % Set number of sim steps
-ESsteps   = 100;
+ESsteps   = 10000;
 
 nPar = length(pars);
 [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
@@ -89,8 +90,8 @@ pscaled = zeros(nPar,ESsteps);
 
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
-alpha     = 200;                % ES parameter
-gain      = 4.5e-7;               % ES parameter
+alpha     = 1000;                % ES parameter
+gain      = 4.5e-1;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 I_peak    = zeros(1,ESsteps);
@@ -110,7 +111,7 @@ x_avg = mean(line_x);
 [MaxLine,max_ind] = max(Line_minBG);
 SumLine = sum(Line_minBG);
 center = sum(line_x.*Line_minBG)/sum(Line_minBG);
-
+Line_minBG = Line_minBG/MaxLine;
 
 
 
@@ -135,6 +136,7 @@ while j <= ESsteps
     normX   = SumLine/SumX;
     ProfXLi = normX*SimDisp;
     [MaxSim,sim_ind] = max(ProfXLi);
+    ProfXLi = ProfXLi/MaxSim;
     
     % Get bunch profile
     dZ      = OUT.Z.AXIS(2,nOut) - OUT.Z.AXIS(1,nOut);

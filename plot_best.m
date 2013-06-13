@@ -9,7 +9,7 @@ global PARAM;
 %param_tcav;
 
 nmin = 1;
-nmax = 100;
+nmax = 10000;
 
 nOut = 3;
 savE = 0;
@@ -51,33 +51,33 @@ old = 0;
 [a,b] = min(residual(1:nmax));
 %[a,b] = max(I_peak);
 %b = 322;
-pCurrent = params(:,b-1);
+pCurrent = params(:,b);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-PARAM.LONE.RAMP = 0;
-PARAM.LONE.DECK = -17.8;
-PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
-PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
-PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
-PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
-% PARAM.SIMU.BIN = 256;
-PARAM.INIT.NPART = 1.00e10;
-PARAM.INIT.SIGZ0 = 0.0066;
-PARAM.NRTL.AMPL = 0.0354;
-PARAM.NRTL.PHAS = 90.4;
-% PARAM.NRTL.R56  = 0.6085;
-% PARAM.NRTL.T566  = 1.325;
-% PARAM.LONE.PHAS = -20.20;
-% PARAM.LTWO.PHAS = -3.5;
-% % PARAM.LI20.EHI = 0.0285;
-PARAM.LI20.R16 = 90;
-PARAM.LI20.R56 = .005;
+% PARAM.LONE.RAMP = 0;
+% PARAM.LONE.DECK = -17.8;
+% PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
+% PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
+% PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+% PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
+% % PARAM.SIMU.BIN = 256;
+% PARAM.INIT.NPART = 1.00e10;
+% PARAM.INIT.SIGZ0 = 0.0066;
+% PARAM.NRTL.AMPL = 0.0354;
+% PARAM.NRTL.PHAS = 90.4;
+% % PARAM.NRTL.R56  = 0.6085;
+% % PARAM.NRTL.T566  = 1.325;
+% % PARAM.LONE.PHAS = -20.20;
+% % PARAM.LTWO.PHAS = -3.5;
+% % % PARAM.LI20.EHI = 0.0285;
+% PARAM.LI20.R16 = 90;
+% PARAM.LI20.R56 = .005;
 %PARAM.LI20.T166 = 0;
 % % PARAM.LI20.BETA = 4;
-ip = zeros(11);
-r56 = 0.004:0.0002:0.006;
-t566 = -.200:.040:.200;
+% ip = zeros(11);
+% r56 = 0.004:0.0002:0.006;
+% t566 = -.200:.040:.200;
 %r56 = linspace(0.0052,0.0056,11);
 %t566 = linspace(-0.06,-0.02,11);
 % for i=1:11;
