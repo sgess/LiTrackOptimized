@@ -1,6 +1,6 @@
 clear all;
 
-file_name = '~/Desktop/new_scan.mat';
+file_name = '~/Desktop/wide_scan.mat';
 savE = 1;
 n_out = 3;
 n_interp = 200;
@@ -12,17 +12,17 @@ global PARAM;
 param_04_16_13;
 PARAM.LI20.R16 = 90;
 
-deck_lo = -21.5;
+deck_lo = -23.5;
 part_lo = 1.90E10;
-sigz_lo = 0.0067;
+sigz_lo = 0.0060;
 ampl_lo = 0.0395;
-phas_lo = 89.9;
+phas_lo = 89.0;
 
 deck_hi = -20.5;
 part_hi = 2.20E10;
-sigz_hi = 0.0077;
+sigz_hi = 0.0080;
 ampl_hi = 0.0405;
-phas_hi = 90.4;
+phas_hi = 91.0;
 
 deck_el = 11;
 part_el = 11;
