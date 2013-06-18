@@ -1,6 +1,7 @@
 clear all;
 
-file_name = '~/Desktop/wide_scan.mat';
+addpath(genpath('../LiTrackOptimized'));
+file_name = '/nfs/slac/g/aard/facet/pwfa/sgess/r85_scan.mat';
 savE = 1;
 n_out = 3;
 n_interp = 200;
@@ -10,25 +11,26 @@ A = load('slac.dat');
 
 global PARAM;
 param_04_16_13;
-PARAM.LI20.R16 = 90;
+PARAM.LI20.R16 = 85;
 
 deck_lo = -23.5;
 part_lo = 1.90E10;
-sigz_lo = 0.0060;
+sigz_lo = 0.0055;
 ampl_lo = 0.0395;
-phas_lo = 89.0;
+phas_lo = 89.5;
 
-deck_hi = -20.5;
+deck_hi = -19.5;
 part_hi = 2.20E10;
 sigz_hi = 0.0080;
-ampl_hi = 0.0405;
-phas_hi = 91.0;
+ampl_hi = 0.0410;
+phas_hi = 91.5;
 
-deck_el = 11;
-part_el = 11;
-sigz_el = 11;
-ampl_el = 11;
-phas_el = 11;
+n_step = 11;
+deck_el = n_step;
+part_el = n_step;
+sigz_el = n_step;
+ampl_el = n_step;
+phas_el = n_step;
 
 decks = linspace(deck_lo,deck_hi,deck_el);
 parts = linspace(part_lo,part_hi,part_el);
