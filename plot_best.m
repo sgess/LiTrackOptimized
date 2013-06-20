@@ -6,7 +6,6 @@ global A;
 A = load('slac.dat');
 
 global PARAM;
-%param_tcav;
 
 nmin = 1;
 nmax = 200;
@@ -15,87 +14,33 @@ nOut = 3;
 savE = 0;
 old = 0;
 
-%spec_axis = cat_dat.yag_ax;
-%spec_thing = cat_dat.YAG_SPEC(:,59);
-
-
-% param_04_16_13;
-% 
-% pars_init = [0.0066;        0.0008;         2.0e10;       -0.15];
-% sens_init = [0.2;           0.2;            0.1;           0.3];
-% name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
-% 
-% pars_nrtl = [0.0405;        90.00;         0.602;       1.3];
-% sens_nrtl = [0.06;           0.01;            0.02;       0.1];
-% name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
-% 
-% pars_lone = [-23.0];
-% sens_lone = [0.3];
-% name_lone = {'LONE PHAS'};
-% 
-% pars_ltwo = [1];
-% sens_ltwo = [1];
-% name_ltwo = {'LTWO PHAS'};
-% 
-% pars_li20 = [1;             95;             50;        0.030;   -0.030;];
-% sens_li20 = [0.5;           0.01;            1;         0.5;     0.5];
-% name_li20 = {'LI20 BETA'; 'LI20 R16'; 'LI20 T166'; 'LI20 EHI'; 'LI20 ELO'};
-% 
-% pars = [pars_init; pars_nrtl; pars_lone; pars_ltwo; pars_li20];
-% sens = [sens_init; sens_nrtl; sens_lone; sens_ltwo; sens_li20];
-% name = [name_init; name_nrtl; name_lone; name_ltwo; name_li20];
-% 
-% nPar = length(pars);
-% [Cent, Diff, lo_lims, hi_lims] = SetParLims(pars,sens);
-
 [a,b] = min(residual(1:nmax));
-%[a,b] = max(I_peak);
-%b = 322;
-pCurrent = params(:,b);
+pCurrent = params(:,b-1);
 pars = pCurrent;
 SetPars(pars, name, nPar);
 
-PARAM.LONE.RAMP = 0;
-PARAM.LONE.DECK = -20.6;
-PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
-PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
-PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
-PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
-% % PARAM.SIMU.BIN = 256;
-PARAM.INIT.NPART = 2.10e10;
-PARAM.INIT.SIGZ0 = 0.0066;
-PARAM.NRTL.AMPL = 0.0400;
-PARAM.NRTL.PHAS = 92.0;
-% % PARAM.NRTL.R56  = 0.6085;
-% % PARAM.NRTL.T566  = 1.325;
-% % PARAM.LONE.PHAS = -20.20;
-% % PARAM.LTWO.PHAS = -3.5;
-% % % PARAM.LI20.EHI = 0.0285;
-PARAM.LI20.R16 = 85;
-% PARAM.LI20.R56 = .005;
-%PARAM.LI20.T166 = 0;
-PARAM.LI20.T566 = 0.200;
-
-% % PARAM.LI20.BETA = 4;
-% ip = zeros(11);
-% r56 = 0.004:0.0002:0.006;
-% t566 = -.200:.040:.200;
-%r56 = linspace(0.0052,0.0056,11);
-%t566 = linspace(-0.06,-0.02,11);
-% for i=1:11;
-%     for j=1:11;
-% PARAM.LI20.R56 = r56(i);
-% PARAM.LI20.T566 = t566(j);
+load('~/Desktop/param_420.mat');
+% PARAM.INIT.SIGZ0 = 0.0060;
+% PARAM.INIT.SIGD0 = 6.5e-4;
+% PARAM.INIT.NPART = 1.95e10;
+% PARAM.INIT.ASYM  = -0.20;
+% % 
+% PARAM.NRTL.AMPL = 0.0403;
+% PARAM.NRTL.PHAS = 89.9;
 % 
-% OUT = LiTrackOpt('FACETpar');
-% ip(i,j) = OUT.I.PEAK(3);
+% PARAM.LONE.RAMP = 0;
+% PARAM.LONE.DECK = -20.5;
+% PARAM.LONE.PHAS = PARAM.LONE.RAMP+PARAM.LONE.DECK;
+% PARAM.LTWO.PHAS = PARAM.LONE.RAMP;
+% PARAM.LONE.GAIN = (PARAM.ENRG.E1 - PARAM.ENRG.E0)/cosd(PARAM.LONE.PHAS); % Energy gain
+% PARAM.LTWO.GAIN = (PARAM.ENRG.E2 - PARAM.ENRG.E1)/cosd(PARAM.LTWO.PHAS); % Energy gain
 % 
-%     end
-% end
+% 
+% PARAM.LI20.R56  = 0.005;
+% PARAM.LI20.T566 = 0.000;
+% PARAM.LI20.R16  = 85;
+% PARAM.LI20.T166 = 000;
 
-%PARAM.LI20.R56 = 0.0060;
-%PARAM.LI20.T566 = 0.1200;
-%PARAM.LI20.T166 = 0;
 
 OUT = LiTrackOpt('FACETpar');
 ip = OUT.I.PEAK(3);
@@ -150,11 +95,3 @@ imagesc(1000*zzLi,eeLi,flipud(rot90(zd,1)));
 xlabel('Z (\mum)','fontsize',14);
 ylabel('\delta (%)','fontsize',14);
 set(gca,'YDir','normal');
-
-% figure(5);
-% plot(eeLi,ProfELi,'g','linewidth',2);
-% xlabel('\delta (%)');
-% 
-% figure(6);
-% plot(line_x,ProfXLi,'g','linewidth',2);
-% xlabel('X (mm)');

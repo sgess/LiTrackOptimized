@@ -1,6 +1,6 @@
 clear all;
 
-load('~/Desktop/data/2013/scans/wide_scan.mat');
+load('~/Desktop/data/2013/scans/r85_scan.mat');
 load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 specs = zeros(250,200);
 
@@ -42,14 +42,23 @@ xlabel('2-10 Phase','fontsize',14);
 
 % Find best fit
 [min_res,min_ind] = min(a+1000*(~data.YAG.good_shot'));
-[max_res,max_ind] = max(a*(1-(~data.YAG.good_shot')));
-plot(xx,specs(218,:),'g',xx,sy(b(218),:),'b','linewidth',2)
-hist(I_max(b(data.YAG.good_shot)),30)
-plot(data.YAG.pyro(data.YAG.good_shot),I_max(b(data.YAG.good_shot)),'*')
-hist(I_max(b(data.YAG.good_shot)),30)
-plot(xx,specs(218,:),'g',xx,sy(b(218),:),'b','linewidth',2)
-xlabel('X (mm)','fontsize',14)
-legend('Data','Sim')
-figure
-plot(xx,specs(246,:),'g',xx,sy(b(246),:),'b','linewidth',2)
-plot(data.YAG.pyro(data.YAG.good_shot),I_max(b(data.YAG.good_shot)),'*')
+[max_res,max_ind] = max(a.*(1-(~data.YAG.good_shot))');
+figure(2);
+plot(xx,specs(max_ind,:),'g',xx,sy(b(max_ind),:),'b','linewidth',2);
+xlabel('X (mm)','fontsize',14);
+legend('Data','Sim');
+title('Worst fit');
+figure(3);
+hist(I_max(b(data.YAG.good_shot)),30);
+title('Peak Current Histogram');
+figure(4);
+plot(data.YAG.pyro(data.YAG.good_shot),I_max(b(data.YAG.good_shot)),'*');
+title('Pyro vs. I');
+figure(5);
+plot(xx,specs(min_ind,:),'g',xx,sy(b(min_ind),:),'b','linewidth',2);
+xlabel('X (mm)','fontsize',14);
+legend('Data','Sim');
+title('Best fit');
+figure(6);
+plot(a(data.YAG.good_shot),I_max(b(data.YAG.good_shot)),'*');
+title('residual vs. I');
