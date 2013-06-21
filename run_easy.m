@@ -19,29 +19,29 @@ A = load('slac.dat');
 
 %Create Parameter struct
 global PARAM;
-param_04_16_13;
-PARAM.LI20.R16 = 90;
-PARAM.LI20.BETA = 3;
+param_04_16_13_v2;
+%PARAM.LI20.R16 = 90;
+%PARAM.LI20.BETA = 3;
 
-pars_init = [0.0062;        0.00064;         2.00e10;       -0.2];
-sens_init = [0.10;          0.1;            0.1;           0.1];
-name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
+% pars_init = [0.0062;        0.00064;         2.00e10;       -0.2];
+% sens_init = [0.10;          0.1;            0.1;           0.1];
+% name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'; 'INIT ASYM'};
 
-pars_nrtl = [0.0403;        90.0;         0.6026;       1.053];
-sens_nrtl = [0.03;          0.005;           0.03;       0.100];
-name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
+% pars_nrtl = [0.0403;        90.0;         0.6026;       1.053];
+% sens_nrtl = [0.03;          0.005;           0.03;       0.100];
+% name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'; 'NRTL R56'; 'NRTL T566'};
 
-% pars_init = [0.0066;        2.1e10];
-% sens_init = [0.2;               0.1];
-% name_init = {'INIT SIGZ0'; 'INIT NPART'};
+pars_init = [0.0062;    0.00064;    2.0e10];
+sens_init = [0.2;         0.1;      0.025];
+name_init = {'INIT SIGZ0'; 'INIT SIGD0'; 'INIT NPART'};
 % 
-% pars_nrtl = [0.0403;        90.30];
-% sens_nrtl = [0.06;           0.01];
-% name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
+pars_nrtl = [0.0403;        90.00];
+sens_nrtl = [0.06;           0.005];
+name_nrtl = {'NRTL AMPL'; 'NRTL PHAS'};
 
-pars_lone = [-20.5;              0];
-sens_lone = [0.03;              -5];
-name_lone = {'LONE DECK'; 'LONE RAMP'};
+pars_lone = [-20.5];
+sens_lone = [0.03];
+name_lone = {'LONE DECK'};
 
 %pars_ltwo = [0.0];
 %sens_ltwo = [-5];
@@ -91,7 +91,7 @@ pscaled = zeros(nPar,ESsteps);
 % Initialize ES
 [w, dt]   = init_ES(nPar);      % ES frequencies and time step
 alpha     = 500;                % ES parameter
-gain      = 5e-4;               % ES parameter
+gain      = 5e-1;               % ES parameter
 cost      = zeros(1,ESsteps);   % ES cost
 Part_frac = zeros(1,ESsteps);   % Fraction of Particles lost
 I_peak    = zeros(1,ESsteps);
@@ -147,7 +147,8 @@ while j <= ESsteps
     
     % Calculate residual
     %residual(j+1) = sum(Line_minBG.*(ProfXLi - Line_minBG).^2);
-    residual(j+1) = sum(weight_fun.*(newProfXLi - newLine_minBG).^2);
+    %residual(j+1) = sum(weight_fun.*(newProfXLi - newLine_minBG).^2);
+    residual(j+1) = sum((newProfXLi - newLine_minBG).^2);
 
     % Set Cost as the value of the residual + particle fraction
     %cost(j+1) = residual(j+1)+1000000/OUT.I.PEAK(3);

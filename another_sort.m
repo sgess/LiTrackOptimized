@@ -1,6 +1,6 @@
 clear all;
 
-load('~/Desktop/data/2013/scans/r85_scan.mat');
+load('~/Desktop/data/2013/scans/enrg_scan.mat');
 load('/Users/sgess/Desktop/data/2013/slims/slim_10794.mat');
 specs = zeros(250,200);
 
@@ -38,6 +38,10 @@ xlabel('Compressor Phase','fontsize',14);
 
 subplot(2,3,5);
 hist(deck(b(data.YAG.good_shot)),10);
+xlabel('2-10 Phase','fontsize',14);
+
+subplot(2,3,6);
+hist(enrg(b(data.YAG.good_shot)),10);
 xlabel('2-10 Phase','fontsize',14);
 
 % Find best fit
