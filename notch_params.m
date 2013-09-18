@@ -61,8 +61,8 @@ r_struct;
 PARAM.LI20.R56   = 0.0100;  % Sector 20 chicane R56 (m)
 PARAM.LI20.T566  = p(1)*PARAM.LI20.R56^2 + p(2)*PARAM.LI20.R56 + p(3);
 PARAM.LI20.ISR   = 0.8E-5;  % ISR energy spread from bends
-PARAM.LI20.ELO   = -0.030;  % RTL lower momentum cut (GeV)
-PARAM.LI20.EHI   = 0.030;   % RTL upper momentum cut (GeV)
+PARAM.LI20.ELO   = -0.035;  % RTL lower momentum cut (GeV)
+PARAM.LI20.EHI   = 0.035;   % RTL upper momentum cut (GeV)
 PARAM.LI20.R16   = 120;     % Dispersion at YAG
 PARAM.LI20.T166  = 1000;    % Second order dispersion at YAG
 PARAM.LI20.BETA  = 5;       % Beta function at YAG
